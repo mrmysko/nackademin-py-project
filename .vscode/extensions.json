@@ -1,0 +1,16 @@
+{
+  "recommendations": [
+    "almenon.arepl",
+    "esbenp.prettier-vscode",
+    "ms-python.black-formatter",
+    "ms-python.pylint",
+    "ms-python.python",
+    "ms-toolsai.jupyter",
+    "ms-vsliveshare.vsliveshare",
+    "redhat.vscode-yaml",
+    "bierner.markdown-mermaid",
+    "foxundermoon.shell-format",
+    "timonwong.shellcheck",
+    "joffreykern.markdown-toc"
+  ]
+}
