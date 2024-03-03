@@ -9,6 +9,9 @@ Vad denna uppgift lär ut.
 - [Syfte](#Syfte)
 - [Förberedelser](#Frberedelser)
 - [Beskrivning](#Beskrivning)
+  - [Del 1](#Del1)
+  - [Del 2](#Del2)
+- [Beskrivning](#Beskrivning-1)
   - [Detaljer](#Detaljer)
     - [Skapa en funktion](#Skapaenfunktion)
     - [Tips](#Tips)
@@ -27,6 +30,23 @@ Vad denna uppgift lär ut.
 - Nödvändiga förberedelsesteg.
 
 ## <a name='Beskrivning'></a>Beskrivning
+
+Denna uppgift fokuserar på att fördjupa förståelsen för de två viktigaste
+delarna av Pythons dokumentation.
+
+### <a name='Del1'></a>Del 1
+
+1. **If-satser**:
+
+Beskriv detaljerat...
+
+### <a name='Del2'></a>Del 2
+
+2. **while-loopar**:
+
+Beskriv detaljerat...
+
+## <a name='Beskrivning-1'></a>Beskrivning
 
 Skriv en funktion med namnet `calculate_area` som beräknar arean av en
 rektangel.
@@ -78,6 +98,10 @@ För att lämna in din uppgift, vänligen följ dessa steg:
    - Din lösning på uppgiften ska skrivas i `uppgift.py`. Det finns specifika
      instruktioner i `uppgift.py` om var du ska placera din källkod.
 
+<!-- 2. **Modifiera `uppgift.md`:**
+
+   - Din lösning på uppgiften ska skrivas i `uppgift.md`. Det finns en struktur att utöka med dina lösningar i `uppgift.md`. -->
+
 3. **Lämna in med Git:**
 
    - När du är klar med din uppgift, använd kommandona `git add .`, `git commit`
@@ -103,7 +127,7 @@ För att lämna in din uppgift, vänligen följ dessa steg:
      "Merge" av din "Feedback"-pull request, men inte förrän ett godkännande har
      erhållits.
 
-6. **Initiera diskussioner i pull requesten:**
+6. **Initiera diskussioner i "Feedback"-pull requesten:**
 
    - Som student är du uppmuntrad att aktivt delta i processen genom att
      initiera diskussioner i din "Feedback"-pull request. Detta är en viktig del
