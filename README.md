@@ -93,24 +93,24 @@ För att lämna in din uppgift, vänligen följ dessa steg:
 5. **Feedback och granskning från utbildaren:**
 
    - Om dina tester passerar med en grön bock, kan du invänta feedback från din
-     utbildare. Utbildaren kan antingen sätta "request changes" om ytterligare
+     utbildare. Utbildaren kan antingen sätta "Request Changes" om ytterligare
      förändringar behövs, eller "approve" om uppgiften är godkänd som den är.
-     Det är viktigt att du inväntar någon av dessa innan du fortsätter.
-   - Efter att utbildaren har gjort "approve" på din inlämning, får du göra en
-     "merge" av din pull request till huvudgrenen (main/master), men inte förrän
-     godkännande har erhållits.
+     Det är viktigt att du inväntar någon av dessa innan du väljer Merge.
+   - Vid "Request Changes" är det viktigt att noggrant granska feedbacken och
+     göra de nödvändiga justeringarna baserat på utbildarens anvisningar för att
+     säkerställa att din uppgift uppfyller alla krav.
+   - Efter att utbildaren har gjort "Approve" på din inlämning, får du göra en
+     "Merge" av din "Feedback"-pull request, men inte förrän ett godkännande har
+     erhållits.
 
 6. **Initiera diskussioner i pull requesten:**
-   - Som student är du uppmuntrad att aktivt delta i processen genom att
-     initiera diskussioner i din pull request. Detta är en viktig del av
-     inlärningsprocessen, där du kan ställa frågor, begära förtydliganden eller
-     diskutera lösningar och feedback med din utbildare. Att engagera sig i
-     dessa diskussioner ger dig möjlighet att djupare förstå uppgiftens krav och
-     förbättra din kod baserat på interaktionen.
 
-Det är också viktigt att noggrant granska feedbacken och göra de nödvändiga
-justeringarna baserat på utbildarens anvisningar för att säkerställa att din
-uppgift uppfyller alla krav.
+   - Som student är du uppmuntrad att aktivt delta i processen genom att
+     initiera diskussioner i din "Feedback"-pull request. Detta är en viktig del
+     av inlärningsprocessen, där du kan ställa frågor, begära förtydliganden
+     eller diskutera lösningar och feedback med din utbildare. Att engagera sig
+     i dessa diskussioner ger dig möjlighet att djupare förstå uppgiftens krav
+     och förbättra din kod baserat på interaktionen.
 
 ## <a name='Anteckningar'></a>Anteckningar
 
