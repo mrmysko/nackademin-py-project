@@ -11,6 +11,7 @@
     "bierner.markdown-mermaid",
     "foxundermoon.shell-format",
     "timonwong.shellcheck",
-    "joffreykern.markdown-toc"
+    "joffreykern.markdown-toc",
+    "johnpapa.vscode-peacock"
   ]
 }
