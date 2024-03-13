@@ -12,6 +12,7 @@
     "timonwong.shellcheck",
     "joffreykern.markdown-toc",
     "johnpapa.vscode-peacock",
-    "shd101wyy.markdown-preview-enhanced"
+    "shd101wyy.markdown-preview-enhanced",
+    "ms-python.isort"
   ]
 }
