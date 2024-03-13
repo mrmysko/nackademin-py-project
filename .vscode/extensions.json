@@ -8,10 +8,10 @@
     "ms-toolsai.jupyter",
     "ms-vsliveshare.vsliveshare",
     "redhat.vscode-yaml",
-    "bierner.markdown-mermaid",
     "foxundermoon.shell-format",
     "timonwong.shellcheck",
     "joffreykern.markdown-toc",
-    "johnpapa.vscode-peacock"
+    "johnpapa.vscode-peacock",
+    "shd101wyy.markdown-preview-enhanced"
   ]
 }
