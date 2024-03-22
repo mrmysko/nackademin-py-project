@@ -19,8 +19,9 @@
   "editor.minimap.enabled": false,
   "files.autoSave": "onFocusChange",
   "git.autofetch": true,
+  "peacock.surpriseMeOnStartup": true,
   "pylint.args": [
     "\"pylint.args\": [\"--disable=C0111\", \"--max-line-length=120\"]"
   ],
-  "peacock.surpriseMeOnStartup": true
+  "pylint.enabled": false
 }
