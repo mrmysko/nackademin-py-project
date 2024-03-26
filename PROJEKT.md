@@ -100,8 +100,6 @@ Grejer man kan bygga på:
     - Leta upp produkter från en butik i andra butiker.
     - Crawla en webbutik med Scrapy.
     - Alternativa input-metoder, cli-args OCH meny.
+    - Om automatisk uppdatering är implementerat, skicka mail vid prisförändring.
     - GUI
 ```
-
-[1]: [https://www.youtube.com/watch?v=1-SvuFIQjK8]
-[2]: [https://www.atlassian.com/blog/productivity/how-to-write-smart-goals]
