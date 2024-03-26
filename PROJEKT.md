@@ -89,7 +89,7 @@ Version 0.2: Spara datan i en databas, kunna få ut den därifrån.
 ```
 Grejer man kan bygga på:
     - Spara datan i en databas.
-    - Om datan sparas i en atabas, ha en metod för att uppdatera pris.
+    - Om datan sparas i en databas, ha en metod för att uppdatera pris.
     - Visa alla grejer formaterade.
     - Lägga till fler butiker för samma produkt.
     - Hämta prisdata för samma produkt i olika färger.
@@ -98,6 +98,8 @@ Grejer man kan bygga på:
     - Statistik över tid.
     - Söka efter produkter direkt i CLI.
     - Leta upp produkter från en butik i andra butiker.
+    - Crawla en webbutik med Scrapy.
+    - Alternativa input-metoder, cli-args OCH meny.
     - GUI
 ```
 
