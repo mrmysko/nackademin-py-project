@@ -44,16 +44,19 @@ Some_Shop2 : get_data(url) -> tuple
 
 class Product
 Product: self.name
-Product: self.sub_url
+Product: self.url
 Product: self.price
 Product: update_price()
 
 ```
 
-write_to_db(class-objekt?) - Skriver data till olika tabeller baserat på om datan är en butik eller produkt?
+Användarinteraktionen kanske är att man typ kör programmet och presenteras en meny där man kan lägga till en produkt, visa alla produkter, ändra en produkt, eller ta bort en produkt.
 
-I dno, man delar väl upp programmet i funktioner som hanterar datan från butiker, och funktioner som hanterar datan i databasen.
-Varje produkter är class-objekt med grejer som namn, url och pris.
+Vill man lägga till en produkt så ger man den ett namn och en url. Webbutiken plockas ut från urlen och det motsvarar ett class-objekt för den butiken eftersom olika butiker behöver olika beatifulsoup-kod för att plocka ut relevant data. Finns inte butiken så måste man hantera det på nått sätt.
+
+Jag vet inte vilken datatyp urlerna ska ha än...har jag inte funktionalitet för mer än en butik än så räcker ju en sträng, men med fler butiker kanske det ska vara en dict?
+
+Sen har man väl nån funktion för att skriva data till databasen, I dno, har inte kommit så långt än.
 
 ### Hur förmedlar ditt program sitt resultat
 
