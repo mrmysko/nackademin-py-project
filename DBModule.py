@@ -1,5 +1,7 @@
 import sqlite3
 
+from ExtractData import ExtractData
+
 # Att man använder placeholders (?) istället för string format har tydligen med att preventa SQL-injections att göra.
 
 # Use with statements to close db-connection and cursor when done.
@@ -11,9 +13,13 @@ class Database:
     def __init__(self, file):
         self.file = file
 
+        # Open a connection to the database.
         self.con = sqlite3.connect(file)
+
+        # Open a cursor to the database.
         self.cur = self.con.cursor()
 
+        # Create table if it doesnt exist.
         self.cur.execute(
             """CREATE TABLE IF NOT EXISTS products( 
                     id INTEGER PRIMARY KEY, 
@@ -23,35 +29,39 @@ class Database:
                     ) STRICT"""
         )
 
+        # Commit the command to db.
         self.con.commit()
 
     def insert_product_data(self, data: tuple):
 
         self.cur.execute(
-            f"INSERT INTO products ('name', 'price', 'url') VALUES (?, ?, ?)", data
+            "INSERT INTO products ('name', 'price', 'url') VALUES (?, ?, ?)", data
         )
 
         self.con.commit()
 
-    def remove_product_data(self, id):
+    def remove_product_data(self, id) -> int:
         # Add confirmation. - BUT, I dont even know if I want the print and confirmation here...thats user facing stuff, only place database methods here.
         # Do something like, Query for id -> Get that data and display it -> Ask for confirmation -> remove_product_data(id)
         self.cur.execute("DELETE FROM products WHERE id = ?", id)
         self.con.commit()
-        print(self.cur.rowcount, "record(s) deleted")
-        input()
+        return self.cur.rowcount
 
-    def print_db(self):
+    def get_product_data(self, id) -> tuple:
+        return self.cur.execute("SELECT * FROM products WHERE id = ?", id).fetchone()
 
-        longest_name = 0
-        for id_, name, price_, url_ in self.dump_db():
-            if len(name) > longest_name:
-                longest_name = len(name)
+    def update_product_data(self, id) -> int:
+        url = self.cur.execute("SELECT url FROM products WHERE id = ?", id).fetchone()[
+            0
+        ]
 
-        for id, name, price, url in self.dump_db():
-            print(
-                f"{str(id).rjust(3)} {name.rjust(longest_name)} {price.rjust(0)} {url.rjust(0)}"
-            )
+        self.cur.execute(
+            "UPDATE products SET name = ?, price = ? WHERE url = ?", ExtractData(url)
+        )
 
-    def dump_db(self):
+        self.con.commit()
+
+        return self.cur.rowcount
+
+    def dump_db(self) -> list:
         return self.cur.execute("SELECT * FROM products").fetchall()
