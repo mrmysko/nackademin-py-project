@@ -33,24 +33,30 @@ class Database:
         self.con.commit()
 
     def insert_product_data(self, data: tuple):
+        """Inserts data into the database."""
 
         self.cur.execute(
             "INSERT INTO products ('name', 'price', 'url') VALUES (?, ?, ?)", data
         )
 
         self.con.commit()
+        return self.cur.rowcount
 
     def remove_product_data(self, id) -> int:
-        # Add confirmation. - BUT, I dont even know if I want the print and confirmation here...thats user facing stuff, only place database methods here.
-        # Do something like, Query for id -> Get that data and display it -> Ask for confirmation -> remove_product_data(id)
+        """Removes items from the database."""
+
         self.cur.execute("DELETE FROM products WHERE id = ?", id)
         self.con.commit()
         return self.cur.rowcount
 
     def get_product_data(self, id) -> tuple:
+        """Returns a single row of "id" product data."""
+
         return self.cur.execute("SELECT * FROM products WHERE id = ?", id).fetchone()
 
     def update_product_data(self, id) -> int:
+        """Retrieves updated product data from "id"s url."""
+
         url = self.cur.execute("SELECT url FROM products WHERE id = ?", id).fetchone()[
             0
         ]
@@ -64,4 +70,6 @@ class Database:
         return self.cur.rowcount
 
     def dump_db(self) -> list:
+        """Returns entire database as a list of tuples."""
+
         return self.cur.execute("SELECT * FROM products").fetchall()
