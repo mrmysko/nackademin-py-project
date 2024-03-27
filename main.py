@@ -18,6 +18,10 @@ Var går skiljelinjen vad som ska hanteras av klassen och vad som kommer från "
 
 # Todo - Gör klart uppdatera och ta bort databas-grejer.
 # Todo - Få ut mer data/kategorier från items? https://www.netonnet.se/art/dator-surfplatta/laptop/laptop-14-16-tum/angstrom-angstrom-m1home/1028915.8908/ t.ex. Kommer ut som "Ångström  (M1HOME)", vilket inte säger någonting. (Det är en laptop btw.)
+# Todo - Stäng databasen.
+# Todo - Options (verbose?) och mer output när saker händer till konsolen.
+# Todo - Felhantering: Fel länk, hittar inte element, databasen går inte att öppna, hittar inte någor i databasen.
+
 
 import os
 
@@ -80,17 +84,27 @@ while True:
             print("p. Print DB.")
             print("b. Go back.")
             user_choice = input(": ")
-            match user_choice:
-                case int():
-                    db.remove_product_data(user_choice)
-                case "p":
-                    db.print_db()
-                    input()
-                case "b":
-                    break
-                case _:
-                    pass
-        db.remove_product_data(user_choice)
+
+            # How do I check against both str and int input?
+            # 1. input
+            # 2. Check if that input CAN become an int with try? - "Bad, use try for exceptional errors" - Kent
+            # 3. If it is an int, do the remove thing?
+            # 4. Else: do the match case thing?
+
+            # Hey, thats illegal.
+            try:
+                int(user_choice)
+                db.remove_product_data(user_choice)
+
+            except ValueError:
+                match user_choice:
+                    case "p":
+                        db.print_db()
+                        input()
+                    case "b":
+                        break
+                    case _:
+                        pass
 
     elif user_choice.lower() == "p":
         db.print_db()
