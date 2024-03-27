@@ -14,13 +14,13 @@ class Database:
         self.file = file
 
         # Open a connection to the database.
-        self.con = sqlite3.connect(file)
+        self.connection = sqlite3.connect(file)
 
         # Open a cursor to the database.
-        self.cur = self.con.cursor()
+        self.cursor = self.connection.cursor()
 
         # Create table if it doesnt exist.
-        self.cur.execute(
+        self.cursor.execute(
             """CREATE TABLE IF NOT EXISTS products( 
                     id INTEGER PRIMARY KEY, 
                     name TEXT NOT NULL, 
@@ -30,46 +30,54 @@ class Database:
         )
 
         # Commit the command to db.
-        self.con.commit()
+        self.connection.commit()
 
     def insert_product_data(self, data: tuple):
         """Inserts data into the database."""
 
-        self.cur.execute(
+        self.cursor.execute(
             "INSERT INTO products ('name', 'price', 'url') VALUES (?, ?, ?)", data
         )
 
-        self.con.commit()
-        return self.cur.rowcount
+        self.connection.commit()
+        return self.cursor.rowcount
 
     def remove_product_data(self, id) -> int:
         """Removes items from the database."""
 
-        self.cur.execute("DELETE FROM products WHERE id = ?", id)
-        self.con.commit()
-        return self.cur.rowcount
+        self.cursor.execute("DELETE FROM products WHERE id = ?", id)
+        self.connection.commit()
+        return self.cursor.rowcount
 
     def get_product_data(self, id) -> tuple:
         """Returns a single row of "id" product data."""
 
-        return self.cur.execute("SELECT * FROM products WHERE id = ?", id).fetchone()
+        return self.cursor.execute("SELECT * FROM products WHERE id = ?", id).fetchone()
 
     def update_product_data(self, id) -> int:
         """Retrieves updated product data from "id"s url."""
 
-        url = self.cur.execute("SELECT url FROM products WHERE id = ?", id).fetchone()[
-            0
-        ]
+        url = self.cursor.execute(
+            "SELECT url FROM products WHERE id = ?", id
+        ).fetchone()[0]
 
-        self.cur.execute(
+        self.cursor.execute(
             "UPDATE products SET name = ?, price = ? WHERE url = ?", ExtractData(url)
         )
 
-        self.con.commit()
+        self.connection.commit()
 
-        return self.cur.rowcount
+        return self.cursor.rowcount
 
     def dump_db(self) -> list:
         """Returns entire database as a list of tuples."""
 
-        return self.cur.execute("SELECT * FROM products").fetchall()
+        return self.cursor.execute("SELECT * FROM products").fetchall()
+
+    def search_db(self, search_term):
+        """Search all (not timestamp) columns for strings matching search_term"""
+
+        return self.cursor.execute(
+            "SELECT * FROM products WHERE name LIKE ?",
+            ("%" + search_term + "%",),
+        ).fetchall()
