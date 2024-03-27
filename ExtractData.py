@@ -1,8 +1,9 @@
 # Sets the headers for use with beatifulsoup, server does not allow requests without a normal header?
+import re
+import requests
+import time
 
 from bs4 import BeautifulSoup
-import requests
-import re
 
 
 def ExtractData(url: str) -> tuple:
@@ -32,5 +33,8 @@ def ExtractData(url: str) -> tuple:
     # Has to be a cleaner way to do this.
     price = re.sub(":-$", "", price)
     price = "".join(price.split()).strip()
+
+    # Clean url
+    url = re.sub("\?.*", "", url)
 
     return (name, price, url)
