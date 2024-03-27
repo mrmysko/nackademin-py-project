@@ -22,7 +22,7 @@ def ExtractData(url: str) -> tuple:
     name = soup.find("div", {"class": "subTitle big"}).get_text().strip()
 
     # Remove art nr from name.
-    name = re.sub(" Art.nr: \d*$", "", name)
+    name = re.sub(" Art.nr:.*$", "", name).strip()
 
     # Selects the div with classname "price-big", gets the text inside the div and strips it of whitespace. Prints as e.g. "2 990:-" - Should prolly remove ":-" and convert this to a int.
     price = soup.find("div", {"class": "price-big"}).get_text().strip()
@@ -31,6 +31,6 @@ def ExtractData(url: str) -> tuple:
     # Although, when I display it later I want ":-", but it's easier to work with an int for comparison etc and different stores might display price differently.
     # Has to be a cleaner way to do this.
     price = re.sub(":-$", "", price)
-    price = "".join(price.split())
+    price = "".join(price.split()).strip()
 
-    return (name, price)
+    return (name, price, url)
