@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 def ExtractData(url: str) -> tuple:
     """Extracts name and price data of a given netonnet URL"""
 
+    # Netonnet didnt like requests without a useragent.
     headers = {
         "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0"
     }
@@ -19,13 +20,13 @@ def ExtractData(url: str) -> tuple:
     # Instantiates a bs-object with request-content and lxml as parser.
     soup = BeautifulSoup(site_content.content, "lxml")
 
-    # Extracts the name of the product. - Should probably format this to remove Art.nr:
+    # Extracts the name of the product.:
     name = soup.find("div", {"class": "subTitle big"}).get_text().strip()
 
     # Remove art nr from name.
     name = re.sub(" Art.nr:.*$", "", name).strip()
 
-    # Selects the div with classname "price-big", gets the text inside the div and strips it of whitespace. Prints as e.g. "2 990:-" - Should prolly remove ":-" and convert this to a int.
+    # Selects the div with classname "price-big", gets the text inside the div and strips it of whitespace. Prints as e.g. "2 990:-"
     price = soup.find("div", {"class": "price-big"}).get_text().strip()
 
     # Removes ":-" from price and converts to an int.
@@ -34,7 +35,7 @@ def ExtractData(url: str) -> tuple:
     price = re.sub(":-$", "", price)
     price = "".join(price.split()).strip()
 
-    # Clean url
+    # Cleans url - This is not foolproof though, needs improvements.
     url = re.sub("\?.*", "", url)
 
     return (name, price, url)

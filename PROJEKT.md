@@ -86,13 +86,13 @@ Version 0.1-03.26: Hämta data och få ut relevant information, visa den i termi
 
 Version 0.2-03.26: Spara datan i en databas, kunna få ut den därifrån.
 
-Version 0.3: Uppdatera och ta bort produkter.
+Version 0.3-03.27: Uppdatera och ta bort produkter.
+
+Version 0.4: Refactor koppling mellan products och db.
 
 ```
 Grejer man kan bygga på:
-    - Spara datan i en databas.
-    - Om datan sparas i en databas, ha en metod för att uppdatera pris.
-    - Visa alla grejer formaterade.
+    - Lägsta pris och timestamps.
     - Lägga till fler butiker för samma produkt.
     - Hämta prisdata för samma produkt i olika färger.
     - Hantera användarinloggning för medlemspriser?
