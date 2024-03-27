@@ -16,13 +16,16 @@ Var går skiljelinjen vad som ska hanteras av klassen och vad som kommer från "
 # sqlite3
 # https://docs.python.org/3/library/sqlite3.html
 
-# Todo - Gör klart uppdatera och ta bort databas-grejer.
 # Todo - Få ut mer data/kategorier från items? https://www.netonnet.se/art/dator-surfplatta/laptop/laptop-14-16-tum/angstrom-angstrom-m1home/1028915.8908/ t.ex. Kommer ut som "Ångström  (M1HOME)", vilket inte säger någonting. (Det är en laptop btw.)
 # Todo - Stäng databasen.
 # Todo - Options (verbose?) och mer output när saker händer till konsolen.
 # Todo - Felhantering: Fel länk, hittar inte element, databasen går inte att öppna, hittar inte någor i databasen, om användaren skriver in fel.
 # Todo - Type-hinta och kommentera
 # Todo - Evaluate meningen med att ha en klass för produkter, vad ville jag ens göra med den? Eller koppla ihop databasen med produkter by id elr nått. Så man kan göra lookups på databasen och få ut ett produktobjekt.
+# Todo - update_date, lowest_seen och lowest_seen_date kolumner i db.
+# Todo - update_all metod.555555
+
+# Ide - Om jag associerar id med en produkt, så kan jag implementera en __next__ och iterera över objekten? Så varje call till next hämtar nästa produkt från databasen?
 
 import os
 
@@ -46,7 +49,8 @@ def clear_console():
     print("|--------------|")
 
 
-def print_db():
+def print_db(db: Database):
+    """Prints the content of a database formatted."""
 
     # Get longest db-name for rjust length.
     longest_name = 0
@@ -66,6 +70,8 @@ def print_db():
 
 
 def remove_menu():
+    """User-facing menu for removing items from database."""
+
     while True:
         clear_console()
 
@@ -106,6 +112,8 @@ def remove_menu():
 
 
 def update_menu():
+    """User-facing menu for updating database items."""
+
     while True:
         clear_console()
 
@@ -123,7 +131,7 @@ def update_menu():
         except ValueError:
             match user_choice:
                 case "p":
-                    print_db()
+                    print_db(db)
                     input()
                 case "b":
                     break
@@ -131,47 +139,51 @@ def update_menu():
                     pass
 
 
-# This dialog-tree is ugly.
+def add_menu():
+    """User-facing menu for adding items to database."""
+
+    clear_console()
+
+    url = input("URL: ")
+    name, price, url = ExtractData(url)
+
+    if db.insert_product_data((name, price, url)):
+        print(f"Added {name} to database.")
+        input()
+
+
 while True:
     clear_console()
 
-    print("1. Query item.")
+    print("1. Query DB.")
     print("2. Add item.")
     print("3. Remove item.")
     print("4. Update item.")
     print("p. Print DB.")
     print("e. Exit")
 
-    # Locals returns a list of local variables and symbols(?) in the current program.
-    if "product" in locals():
-        print(f"Stored Query: {product.name} {product.price}")
-    # print("3. Query DB.")
-
     user_choice = input(": ")
 
-    if user_choice == "1":
+    match user_choice:
+        case "1":
+            print("Not implemented yet!")
+            input()
 
-        url = input("URL: ")
-        name, price, url = ExtractData(url)
+        case "2":
+            add_menu()
 
-        product = Product(name, price, url)
+        case "3":
+            remove_menu()
 
-        print(name)
-        print(price)
-        input()
+        case "4":
+            update_menu()
 
-    elif user_choice == "2":
-        db.insert_product_data((product.name, product.price, product.url))
+        case "p":
+            print_db(db)
+            input()
 
-    elif user_choice == "3":
-        remove_menu()
+        case "e":
+            break
 
-    elif user_choice == "4":
-        update_menu()
-
-    elif user_choice.lower() == "p":
-        print_db()
-        input()
-
-    elif user_choice.lower() == "e":
-        break
+        case _:
+            pass
