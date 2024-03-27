@@ -82,9 +82,11 @@ Motivering? Börjar väl med research idag.
 
 ## Arbetsplan
 
-Version 0.1: Hämta data och få ut relevant information, visa den i terminalen.
+Version 0.1-03.26: Hämta data och få ut relevant information, visa den i terminalen.
 
-Version 0.2: Spara datan i en databas, kunna få ut den därifrån.
+Version 0.2-03.26: Spara datan i en databas, kunna få ut den därifrån.
+
+Version 0.3: Uppdatera och ta bort produkter.
 
 ```
 Grejer man kan bygga på:
@@ -101,5 +103,6 @@ Grejer man kan bygga på:
     - Crawla en webbutik med Scrapy.
     - Alternativa input-metoder, cli-args OCH meny.
     - Om automatisk uppdatering är implementerat, skicka mail vid prisförändring.
+    - Inställningar som sparas i ett databas-table.
     - GUI
 ```
