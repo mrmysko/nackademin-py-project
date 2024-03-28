@@ -8,7 +8,7 @@ db = Database("price.db")
 
 
 def clear_console():
-    """Clears the console on both windows and unix systems."""
+    """clears the console on both windows and unix systems."""
     command = "clear"
     if os.name == "nt":
         command = "cls"
@@ -20,7 +20,7 @@ def clear_console():
 
 
 def print_db(products: list):
-    """Prints the content of a database formatted."""
+    """prints the content of a database formatted."""
 
     if not products:
         print("No match.")
@@ -33,18 +33,29 @@ def print_db(products: list):
             longest_name = len(product.name)
 
     print(
-        f'{"ID".ljust(2)} | {"NAME".center(longest_name)} | {"PRICE".center(10)} | {"URL".rjust(0)}'
+        f'{"ID".ljust(2)} | {"NAME".center(longest_name)} | {"CUR PRICE".center(10)} | {"LOW PRICE".rjust(10)} | {"URL".rjust(0)}'
     )
 
     # Prints db right-justified by longest product name.
     for product in products:
         print(
-            f"{str(product.id).rjust(2)} | {product.name.rjust(longest_name)} | {format_price(product.price).rjust(10)} | {product.url.rjust(0)}"
+            f"{str(product.id).rjust(2)} | {product.name.rjust(longest_name)} | {format_price(product.price).rjust(10)} | {format_price(product.lowest_price).rjust(10)} | {product.url.rjust(0)}"
         )
 
 
+# Alternative formatting
+# for product in products:
+#    print(
+#        f"""| {str(product.id).rjust(2)}. {product.name}
+# | Current Price: {format_price(product.price).rjust(10)}
+# |  Lowest Price: {format_price(product.lowest_price).rjust(10)}
+# | {product.url.rjust(0)}
+# |"""
+#        )
+
+
 def remove_menu():
-    """User-facing menu for removing items from database."""
+    """user-facing menu for removing items from database."""
 
     while True:
         clear_console()
@@ -90,7 +101,7 @@ def remove_menu():
 
 
 def update_menu():
-    """User-facing menu for updating database items."""
+    """user-facing menu for updating database items."""
 
     while True:
         clear_console()
@@ -125,7 +136,7 @@ def update_menu():
 
 
 def add_menu():
-    """User-facing menu for adding items to database."""
+    """user-facing menu for adding items to database."""
 
     clear_console()
 

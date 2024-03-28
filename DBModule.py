@@ -71,19 +71,23 @@ class Database:
 
             updated = True
 
-        update_tuple = (product.name, product.price, product.last_updated, product.url)
+            update_tuple = (
+                product.name,
+                product.price,
+                product.last_updated,
+                product.url,
+            )
 
-        # This doesnt update because parameters are positional, and 4th parameter is last_updated so url = will never be true.
-        self.cursor.execute(
-            f"UPDATE products SET name = ?, price = ?, last_updated = ? WHERE url = ?",
-            update_tuple,
-        )
+            self.cursor.execute(
+                f"UPDATE products SET name = ?, price = ?, last_updated = ? WHERE url = ?",
+                update_tuple,
+            )
 
-        self.connection.commit()
+            self.connection.commit()
 
         return updated
 
-    def dump_db(self):
+    def dump_db(self) -> list:
         """returns a list of product class-objects."""
 
         all_rows = self.cursor.execute("SELECT * FROM products").fetchall()
@@ -93,9 +97,7 @@ class Database:
         # This is a list of class-objects.
         return products
 
-        # eturn self.cursor.execute("SELECT ? FROM products").fetchall()
-
-    def search_db(self, search_term):
+    def search_db(self, search_term) -> list:
         """search name column for strings matching search_term"""
 
         matching_rows = self.cursor.execute(
@@ -129,8 +131,3 @@ class Database:
 
         self.cursor.close()
         self.connection.close()
-
-    # def dump_db(self) -> list:
-    #    """returns entire database as a list of tuples."""
-
-    #    return self.cursor.execute("SELECT * FROM products").fetchall()
