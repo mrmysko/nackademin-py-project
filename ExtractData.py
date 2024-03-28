@@ -1,12 +1,13 @@
 # Sets the headers for use with beatifulsoup, server does not allow requests without a normal header?
 import re
 import requests
-import time
 
+from datetime import datetime
 from bs4 import BeautifulSoup
+from Product import Product
 
 
-def ExtractData(url: str) -> tuple:
+def ExtractData(url: str) -> Product:
     """Extracts name and price data of a given netonnet URL"""
 
     # Netonnet didnt like requests without a useragent.
@@ -38,4 +39,8 @@ def ExtractData(url: str) -> tuple:
     # Cleans url - This is not foolproof though, needs improvements.
     url = re.sub("\?.*", "", url)
 
-    return (name, price, url)
+    last_updated = datetime.now().isoformat()
+
+    data = Product(None, name, price, url, last_updated)
+
+    return data
