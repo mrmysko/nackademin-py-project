@@ -19,27 +19,27 @@ def clear_console():
     print("|--------------|")
 
 
-def print_db(db_items: list):
+def print_db(products: list):
     """Prints the content of a database formatted."""
 
-    if not db_items:
+    if not products:
         print("No match.")
         return
 
     # Get longest db-name for rjust length.
     longest_name = 0
-    for id_, name, price_, url_, last_updated_ in db_items:
-        if len(name) > longest_name:
-            longest_name = len(name)
+    for product in products:
+        if len(product.name) > longest_name:
+            longest_name = len(product.name)
 
     print(
-        f'{"ID".ljust(2)} | {"NAME".center(longest_name)} | {"PRICE".center(8)} | {"URL".rjust(0)}'
+        f'{"ID".ljust(2)} | {"NAME".center(longest_name)} | {"PRICE".center(10)} | {"URL".rjust(0)}'
     )
 
     # Prints db right-justified by longest product name.
-    for id, name, price, url, last_updated_ in db_items:
+    for product in products:
         print(
-            f"{str(id).rjust(2)} | {name.rjust(longest_name)} | {format_price(price).rjust(8)} | {url.rjust(0)}"
+            f"{str(product.id).rjust(2)} | {product.name.rjust(longest_name)} | {format_price(product.price).rjust(10)} | {product.url.rjust(0)}"
         )
 
 
@@ -81,7 +81,7 @@ def remove_menu():
         except ValueError:
             match user_choice:
                 case "p":
-                    print_db(db.dump_db())
+                    print_db(db.print_db())
                     input()
                 case "b":
                     break
