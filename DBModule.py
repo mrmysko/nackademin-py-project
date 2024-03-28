@@ -23,7 +23,9 @@ class Database:
                     name TEXT NOT NULL, 
                     price TEXT, 
                     url TEXT NOT NULL,
-                    last_updated TEXT
+                    last_updated TEXT,
+                    lowest_price INTEGER,
+                    lowest_price_date TEXT
                     ) STRICT"""
         )
 
@@ -43,7 +45,7 @@ class Database:
         """inserts data into the database."""
 
         self.cursor.execute(
-            "INSERT INTO products ('name', 'price', 'url', 'last_updated') VALUES (?, ?, ?, ?)",
+            "INSERT INTO products ('name', 'price', 'url', 'last_updated', 'lowest_price', 'lowest_price_date') VALUES (?, ?, ?, ?, ?, ?)",
             product.__data__(),
         )
 
@@ -81,18 +83,29 @@ class Database:
 
         return updated
 
-    def dump_db(self) -> list:
-        """returns entire database as a list of tuples."""
+    def dump_db(self):
+        """returns a list of product class-objects."""
 
-        return self.cursor.execute("SELECT * FROM products").fetchall()
+        all_rows = self.cursor.execute("SELECT * FROM products").fetchall()
+
+        products = [Product(*id) for id in all_rows]
+
+        # This is a list of class-objects.
+        return products
+
+        # eturn self.cursor.execute("SELECT ? FROM products").fetchall()
 
     def search_db(self, search_term):
-        """search all (not timestamp) columns for strings matching search_term"""
+        """search name column for strings matching search_term"""
 
-        return self.cursor.execute(
+        matching_rows = self.cursor.execute(
             "SELECT * FROM products WHERE name LIKE ?",
             ("%" + search_term + "%",),
         ).fetchall()
+
+        products = [Product(*id) for id in matching_rows]
+
+        return products
 
     def update_all(self) -> int:
         """updates all items in the database, returns an int of rows updated."""
@@ -116,3 +129,8 @@ class Database:
 
         self.cursor.close()
         self.connection.close()
+
+    # def dump_db(self) -> list:
+    #    """returns entire database as a list of tuples."""
+
+    #    return self.cursor.execute("SELECT * FROM products").fetchall()
