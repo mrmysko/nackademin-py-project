@@ -1,37 +1,7 @@
-# Notes:
-# Selenium verkar onödigt stort, en hel webbläsarmotor för en request.
-# Webhallen anävnder ett js för att generera typ hela deras webbsida, pivot till netonnet KEKL
-
-"""Behöver produkter ens ha en klass? Vad ska jag göra med ett klassobjekt som är en produkt? 
-Just nu har den inga metoder, men om den skulle ha det, vad skulle det vara? 
-Och hur accesar jag det objektet om jag inte queryat med en länk?"""
-
-""""Adaptor-funktionen", så iman har man en funktion som...hämtar data och standardiserar den? 
-Den skulle då kalla på en metod från en...en butik för att få datan? 
-Var går skiljelinjen vad som ska hanteras av klassen och vad som kommer från "adaptorn" då? """
-
-# bs4
-# https://www.crummy.com/software/BeautifulSoup/bs4/doc/
-
-# sqlite3
-# https://docs.python.org/3/library/sqlite3.html
-
-# Todo - Få ut mer data/kategorier från items? https://www.netonnet.se/art/dator-surfplatta/laptop/laptop-14-16-tum/angstrom-angstrom-m1home/1028915.8908/ t.ex. Kommer ut som "Ångström  (M1HOME)", vilket inte säger någonting. (Det är en laptop btw.)
-# Todo - Stäng databasen.
-# Todo - Options (verbose?) och mer output när saker händer till konsolen.
-# Todo - Felhantering: Fel länk, hittar inte element, databasen går inte att öppna, hittar inte någor i databasen, om användaren skriver in fel.
-# Todo - Type-hinta och kommentera
-# Todo - Evaluate meningen med att ha en klass för produkter, vad ville jag ens göra med den? Eller koppla ihop databasen med produkter by id elr nått. Så man kan göra lookups på databasen och få ut ett produktobjekt.
-# Todo - update_date, lowest_seen och lowest_seen_date kolumner i db.
-# Todo - update_all metod.555555
-
-# Ide - Om jag associerar id med en produkt, så kan jag implementera en __next__ och iterera över objekten? Så varje call till next hämtar nästa produkt från databasen?
-
 import os
 
 from ExtractData import ExtractData
 from DBModule import Database
-from Product import Product
 
 # Dont make a static db. Allow to change?
 db = Database("price.db")
@@ -49,23 +19,27 @@ def clear_console():
     print("|--------------|")
 
 
-def print_db(db: Database):
+def print_db(db_items: list):
     """Prints the content of a database formatted."""
+
+    if not db_items:
+        print("No match.")
+        return
 
     # Get longest db-name for rjust length.
     longest_name = 0
-    for id_, name, price_, url_ in db.dump_db():
+    for id_, name, price_, url_, last_updated_ in db_items:
         if len(name) > longest_name:
             longest_name = len(name)
 
     print(
-        f'{"ID".rjust(2)} {"NAME".center(longest_name)} {"PRICE".rjust(5)} {"URL".rjust(0)}'
+        f'{"ID".ljust(2)} | {"NAME".center(longest_name)} | {"PRICE".center(8)} | {"URL".rjust(0)}'
     )
 
     # Prints db right-justified by longest product name.
-    for id, name, price, url in db.dump_db():
+    for id, name, price, url, last_updated_ in db_items:
         print(
-            f"{str(id).rjust(2)} {name.rjust(longest_name)} {price.rjust(5)} {url.rjust(0)}"
+            f"{str(id).rjust(2)} | {name.rjust(longest_name)} | {format_price(price).rjust(8)} | {url.rjust(0)}"
         )
 
 
@@ -75,10 +49,10 @@ def remove_menu():
     while True:
         clear_console()
 
-        print("Which item would you like to remove? (id)")
+        print("Which item would you like to remove?")
         print("p. Print DB.")
         print("b. Go back.")
-        user_choice = input(": ")
+        user_choice = input("ID: ")
 
         # How do I check against both str and int input?
         # 1. input
@@ -89,21 +63,25 @@ def remove_menu():
         # Hey, thats illegal.
         try:
             int(user_choice)
-            # If im using classes for products, this should just be product.name tbh. So ask for product -> Fetch the product to a class object -> dosplay name.
-            print(f"Confirm removal of: {db.get_product_data(user_choice)[1]}")
+
+            product = db.get_product_data(user_choice)
+
+            print(f"Confirm removal of: {product.name}")
             print("(y/n)")
+
             user_confirm = input(": ")
             match user_confirm.lower():
                 case "y":
-                    print(f"{db.remove_product_data(user_choice)} row(s) removed.")
-                    input()
+                    if db.remove_product_data(product):
+                        print(f"{product.name} removed.")
+                        input()
                 case _:
                     pass
 
         except ValueError:
             match user_choice:
                 case "p":
-                    print_db()
+                    print_db(db.dump_db())
                     input()
                 case "b":
                     break
@@ -117,21 +95,28 @@ def update_menu():
     while True:
         clear_console()
 
-        print("Which item would you like to update? (id)")
+        print("Which item would you like to update?")
         print("p. Print DB.")
         print("b. Go back.")
-        user_choice = input(": ")
+        user_choice = input("ID: ")
 
         # Hey, thats illegal.
         try:
             int(user_choice)
-            print(f"{db.update_product_data(user_choice)} row(s) updated.")
+
+            product = db.get_product_data(user_choice)
+
+            if db.update_product_data(product):
+                print(f"{product.name} updated.")
+                input()
+                continue
+            print(f"{product.name} already up to date.")
             input()
 
         except ValueError:
             match user_choice:
                 case "p":
-                    print_db(db)
+                    print_db(db.dump_db())
                     input()
                 case "b":
                     break
@@ -145,45 +130,92 @@ def add_menu():
     clear_console()
 
     url = input("URL: ")
-    name, price, url = ExtractData(url)
+    product = ExtractData(url)
 
-    if db.insert_product_data((name, price, url)):
-        print(f"Added {name} to database.")
+    if db.insert_product_data(product):
+        print(f"Added {product.name} to database.")
         input()
 
 
-while True:
-    clear_console()
+def search_menu():
+    while True:
+        clear_console()
 
-    print("1. Query DB.")
-    print("2. Add item.")
-    print("3. Remove item.")
-    print("4. Update item.")
-    print("p. Print DB.")
-    print("e. Exit")
+        print("b. Go back.")
 
-    user_choice = input(": ")
+        search_term = input("Search: ")
 
-    match user_choice:
-        case "1":
-            print("Not implemented yet!")
-            input()
+        match search_term:
 
-        case "2":
-            add_menu()
+            case "b":
+                break
 
-        case "3":
-            remove_menu()
+            case _:
+                pass
 
-        case "4":
-            update_menu()
+        result = db.search_db(search_term)
 
-        case "p":
-            print_db(db)
-            input()
+        print_db(result)
+        input()
 
-        case "e":
-            break
 
-        case _:
-            pass
+def format_price(price: int) -> str:
+    """formats price to a human readable form."""
+
+    price = f"{int(price):,} :-".replace(",", " ")
+
+    return price
+
+
+def main():
+
+    menu_items = {
+        "1": "Search DB",
+        "2": "Add item",
+        "3": "Remove item",
+        "4": "Update item",
+        "5": "Update all",
+        "p": "Print DB",
+        "e": "Exit",
+    }
+
+    while True:
+        clear_console()
+
+        for key, item in menu_items.items():
+            print(f"{key}. {item}.")
+
+        user_choice = input(": ")
+
+        match user_choice:
+            case "1":
+                search_menu()
+
+            case "2":
+                add_menu()
+
+            case "3":
+                remove_menu()
+
+            case "4":
+                update_menu()
+
+            case "5":
+                rows_updated = db.update_all()
+                print(f"{rows_updated} product(s) updated.")
+                input()
+
+            case "p":
+                print_db(db.dump_db())
+                input()
+
+            case "e":
+                db.close_db()
+                break
+
+            case _:
+                pass
+
+
+if __name__ == "__main__":
+    main()

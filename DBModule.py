@@ -1,10 +1,7 @@
 import sqlite3
 
 from ExtractData import ExtractData
-
-# Att man använder placeholders (?) istället för string format har tydligen med att preventa SQL-injections att göra.
-
-# Use with statements to close db-connection and cursor when done.
+from Product import Product
 
 
 class Database:
@@ -19,65 +16,103 @@ class Database:
         # Open a cursor to the database.
         self.cursor = self.connection.cursor()
 
-        # Create table if it doesnt exist.
+        # Create table if it doesnt exist. - This is supposed to get time data from python, but SQLite supports its own datetime.
         self.cursor.execute(
             """CREATE TABLE IF NOT EXISTS products( 
                     id INTEGER PRIMARY KEY, 
                     name TEXT NOT NULL, 
                     price TEXT, 
-                    url TEXT NOT NULL
+                    url TEXT NOT NULL,
+                    last_updated TEXT
                     ) STRICT"""
         )
 
         # Commit the command to db.
         self.connection.commit()
 
-    def insert_product_data(self, data: tuple):
-        """Inserts data into the database."""
+    def get_product_data(self, id) -> Product:
+        """returns a single row of "id" product data."""
+
+        data = self.cursor.execute(
+            "SELECT * FROM products WHERE id = ?", str(id)
+        ).fetchone()
+
+        return Product(*data)
+
+    def insert_product_data(self, product: Product) -> int:
+        """inserts data into the database."""
 
         self.cursor.execute(
-            "INSERT INTO products ('name', 'price', 'url') VALUES (?, ?, ?)", data
+            "INSERT INTO products ('name', 'price', 'url', 'last_updated') VALUES (?, ?, ?, ?)",
+            product.__data__(),
         )
 
         self.connection.commit()
         return self.cursor.rowcount
 
-    def remove_product_data(self, id) -> int:
-        """Removes items from the database."""
+    def remove_product_data(self, product) -> bool:
+        """removes items from the database."""
 
-        self.cursor.execute("DELETE FROM products WHERE id = ?", id)
-        self.connection.commit()
-        return self.cursor.rowcount
+        if self.cursor.execute("DELETE FROM products WHERE id = ?", str(product.id)):
+            self.connection.commit()
+            return True
 
-    def get_product_data(self, id) -> tuple:
-        """Returns a single row of "id" product data."""
+    def update_product_data(self, product: Product) -> bool:
+        """updates a products data."""
 
-        return self.cursor.execute("SELECT * FROM products WHERE id = ?", id).fetchone()
+        updata = ExtractData(product.url)
+        updated = False
 
-    def update_product_data(self, id) -> int:
-        """Retrieves updated product data from "id"s url."""
+        if updata.price < product.price:
+            product.price = updata.price
+            product.last_updated = updata.last_updated
 
-        url = self.cursor.execute(
-            "SELECT url FROM products WHERE id = ?", id
-        ).fetchone()[0]
+            updated = True
 
+        update_tuple = (product.name, product.price, product.last_updated, product.url)
+
+        # This doesnt update because parameters are positional, and 4th parameter is last_updated so url = will never be true.
         self.cursor.execute(
-            "UPDATE products SET name = ?, price = ? WHERE url = ?", ExtractData(url)
+            f"UPDATE products SET name = ?, price = ?, last_updated = ? WHERE url = ?",
+            update_tuple,
         )
 
         self.connection.commit()
 
-        return self.cursor.rowcount
+        return updated
 
     def dump_db(self) -> list:
-        """Returns entire database as a list of tuples."""
+        """returns entire database as a list of tuples."""
 
         return self.cursor.execute("SELECT * FROM products").fetchall()
 
     def search_db(self, search_term):
-        """Search all (not timestamp) columns for strings matching search_term"""
+        """search all (not timestamp) columns for strings matching search_term"""
 
         return self.cursor.execute(
             "SELECT * FROM products WHERE name LIKE ?",
             ("%" + search_term + "%",),
         ).fetchall()
+
+    def update_all(self) -> int:
+        """updates all items in the database, returns an int of rows updated."""
+
+        products_updated = 0
+
+        # A second cursor to iterate rows while the first updates them.
+        cursor2 = self.connection.cursor()
+
+        cursor2.execute("SELECT * FROM products")
+        for row in cursor2:
+            if self.update_product_data(Product(*row)):
+                products_updated += 1
+
+        cursor2.close()
+
+        return products_updated
+
+    def close_db(self):
+        """closes the database connection."""
+
+        self.cursor.close()
+        self.connection.close()
