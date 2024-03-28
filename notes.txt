@@ -1,0 +1,30 @@
+# Notes:
+# Selenium verkar onödigt stort, en hel webbläsarmotor för en request.
+# Webhallen anävnder ett js för att generera typ hela deras webbsida, pivot till netonnet KEKL
+# Att man använder placeholders (?) istället för string format har tydligen med att preventa SQL-injections att göra.
+
+
+"""Behöver produkter ens ha en klass? Vad ska jag göra med ett klassobjekt som är en produkt? 
+Just nu har den inga metoder, men om den skulle ha det, vad skulle det vara? (en grej skulle väl kunna va att ett objekt kan uppdatera sin egen data. Sen skickas det till nån db metod för att commitas till databasen.)
+Och hur accesar jag det objektet om jag inte queryat med en länk?"""
+
+""""Adaptor-funktionen", så iman har man en funktion som...hämtar data och standardiserar den? 
+Den skulle då kalla på en metod från en...en butik för att få datan? 
+Var går skiljelinjen vad som ska hanteras av klassen och vad som kommer från "adaptorn" då? """
+
+# bs4
+# https://www.crummy.com/software/BeautifulSoup/bs4/doc/
+
+# sqlite3
+# https://docs.python.org/3/library/sqlite3.html
+
+# Todo - Få ut mer data/kategorier från items? https://www.netonnet.se/art/dator-surfplatta/laptop/laptop-14-16-tum/angstrom-angstrom-m1home/1028915.8908/ t.ex. Kommer ut som "Ångström  (M1HOME)", vilket inte säger någonting. (Det är en laptop btw.)
+# Todo - Options (verbose?) och mer output när saker händer till konsolen.
+# Todo - Felhantering: Fel länk, hittar inte element, databasen går inte att öppna, hittar inte någor i databasen, om användaren skriver in fel.
+# Todo - Evaluate meningen med att ha en klass för produkter, vad ville jag ens göra med den? Eller koppla ihop databasen med produkter by id elr nått. Så man kan göra lookups på databasen och få ut ett produktobjekt.
+# Todo - update_date, lowest_seen och lowest_seen_date kolumner i db.
+# Todo - Async update_all?
+
+# Ide - Om jag associerar id med en produkt, så kan jag implementera en __next__ och iterera över objekten? Så varje call till next hämtar nästa produkt från databasen?
+
+# Use with statements to close db-connection and cursor when done.
