@@ -89,6 +89,12 @@ Version 0.4-03.27   : Sök i databasen.
 Version 0.5-03.28   : Refactor koppling mellan products och db.
 Version 0.51-03.28  : Timestamps och lägst sedda pris.
 
+Version 0.52: ThreadPool för requests, refactor product update.
+
+Version 0.53: "Deamon-mode"
+
+Version 0.54: Mail-alerting.
+
 ```
 Grejer man kan bygga på:
     - Lägsta pris och timestamps.
