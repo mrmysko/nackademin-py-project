@@ -1,11 +1,13 @@
 import os
+import sys
 
 from Product import Product
 from DBModule import Database
 from concurrent.futures import ThreadPoolExecutor
 
 # Dont make a static db. Allow to change?
-db = Database("price.db")
+# Opens price.db placed in programs root folder.
+db = Database(sys.path[0] + "\\price.db")
 
 
 def clear_console():
@@ -159,7 +161,6 @@ def search_menu():
         search_term = input("Search: ")
 
         match search_term:
-
             case "b":
                 break
 
@@ -181,7 +182,6 @@ def update_all_menu():
 
     # lambda this?
     def test_update(product):
-
         return product.update()
 
     # Creates a threadpool with 8 threads.
@@ -206,7 +206,6 @@ def format_price(price: int) -> str:
 
 
 def main():
-
     menu_items = {
         "1": "Search DB",
         "2": "Add item",

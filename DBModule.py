@@ -1,6 +1,5 @@
 import sqlite3
 
-from ExtractData import ExtractData
 from Product import Product
 
 
@@ -61,7 +60,7 @@ class Database:
             self.connection.commit()
             return True
 
-    def update_product_data(self, product: Product):
+    def update_product_data(self, product: Product) -> int:
         """updates a products data."""
 
         update_tuple = (
@@ -74,11 +73,12 @@ class Database:
         )
 
         self.cursor.execute(
-            f"UPDATE products SET name = ?, price = ?, last_updated = ?, lowest_price = ?, lowest_price_date = ? WHERE url = ?",
+            "UPDATE products SET name = ?, price = ?, last_updated = ?, lowest_price = ?, lowest_price_date = ? WHERE url = ?",
             update_tuple,
         )
 
         self.connection.commit()
+        return self.cursor.rowcount
 
     def dump_db(self) -> list:
         """returns a list of product class-objects."""

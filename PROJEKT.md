@@ -94,7 +94,7 @@ Version 0.5-03.28   : Refactor koppling mellan products och db.
 
 Version 0.51-03.28  : Timestamps och lägst sedda pris.
 
-Version 0.52: ThreadPool för requests, refactor product update.
+Version 0.52-03.30  : ThreadPool för requests, refactor product update.
 
 Version 0.53: "Deamon-mode"
 

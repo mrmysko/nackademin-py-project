@@ -8,7 +8,6 @@ from bs4 import BeautifulSoup
 
 
 def parse_url(url):
-
     response = requests.get(url)
 
     soup = BeautifulSoup(response.text, "html.parser")
@@ -20,7 +19,6 @@ def parse_url(url):
 
 
 if __name__ == "__main__":
-
     urls = [
         "https://scrapeme.live/shop/page/1/",
         "https://scrapeme.live/shop/page/2/",

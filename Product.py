@@ -3,7 +3,6 @@ from ExtractData import ExtractData
 
 class Product:
     def __init__(self, *args):
-
         # Unpacks and dynamically assigns variables.
         for attr, value in args:
             setattr(self, attr, value)
