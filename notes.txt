@@ -16,5 +16,27 @@
 # Todo - Felhantering: Fel länk, hittar inte element, databasen går inte att öppna, hittar inte någor i databasen, om användaren skriver in fel.
 # Todo - Async update_all?
 # Todo - Dynamically assign product-class attributes from db with cursor.description
+# Todo - Regex clean url, also move it to class method.
+# Todo - Merge update och insert data.
+        - update tar ett id -> hämtar product_data -> kör dens update() -> Kollar om datan är uppdaterad 
+                                                                            -> om inte, break -> annars skicka till insert som uppdaterar i db.
 
 
+
+Refactor todo:
+
+1.
+add_product tar en url -> 
+skapar ett product-objekt -> 
+dens init tar antingen en map från db eller kallar på extract_data för att fylla ut attributen.
+
+2.
+product.update() kallar på extractdata(self.url) -> 
+kollar om den nya datan är uppdaterad -> 
+byter ut i self.
+
+3.
+ta bort update_all från databasen -> 
+lägg en update_all i main som dumpar databasen till en lista av product-objekt -> 
+loopa product.update() i en threadpool -> 
+loopa över listan till db.update() för att commita till db.

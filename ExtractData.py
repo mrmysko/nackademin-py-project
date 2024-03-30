@@ -4,10 +4,9 @@ import requests
 
 from datetime import datetime
 from bs4 import BeautifulSoup
-from Product import Product
 
 
-def ExtractData(url: str) -> Product:
+def ExtractData(url: str) -> tuple:
     """Extracts name and price data of a given netonnet URL"""
 
     # Netonnet didnt like requests without a useragent.
@@ -35,12 +34,11 @@ def ExtractData(url: str) -> Product:
     # Has to be a cleaner way to do this.
     price = re.sub(":-$", "", price)
     price = "".join(price.split()).strip()
+    price = int(price)
 
     # Cleans url - This is not foolproof though, needs improvements.
-    url = re.sub("\?.*", "", url)
+    # url = re.sub("?.*", "", url)
 
     last_updated = datetime.now().isoformat()
 
-    data = Product(None, name, price, url, last_updated)
-
-    return data
+    return (name, price, last_updated)
