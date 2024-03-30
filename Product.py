@@ -1,25 +1,17 @@
-class Product:
-    def __init__(
-        self,
-        id,
-        name,
-        price,
-        url,
-        last_updated,
-        lowest_price=None,
-        lowest_price_date=None,
-    ):
-        self.id = id
-        self.name = name
-        self.price = price
-        self.url = url
-        self.last_updated = last_updated
-        self.lowest_price = lowest_price
-        self.lowest_price_date = lowest_price_date
+from ExtractData import ExtractData
 
-        if lowest_price == None:
-            self.lowest_price = self.price
-            self.lowest_price_date = self.last_updated
+
+class Product:
+    def __init__(self, *args):
+
+        # Unpacks and dynamically assigns variables.
+        for attr, value in args:
+            setattr(self, attr, value)
+
+        # If this was a call from add_menu the class will only have a self.url.
+        # Then call update() to get the info.
+        if not hasattr(self, "name"):
+            self.update()
 
     def __str__(self):
         return self.name
@@ -29,12 +21,21 @@ class Product:
 
         return (
             self.name,
-            str(self.price),
+            self.price,
             self.url,
             self.last_updated,
             self.lowest_price,
             self.lowest_price_date,
         )
 
-    def update_date(self):
-        pass
+    def update(self):
+        # This should probably be changed to just update if anything is changed.
+        self.name, self.price, self.last_updated = ExtractData(self.url)
+
+        if not hasattr(self, "lowest_price") or self.price < self.lowest_price:
+            self.lowest_price = self.price
+            self.lowest_price_date = self.last_updated
+
+
+if __name__ == "__main__":
+    pass
