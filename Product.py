@@ -36,6 +36,8 @@ class Product:
             self.lowest_price = self.price
             self.lowest_price_date = self.last_updated
 
+        return self
+
 
 if __name__ == "__main__":
     pass

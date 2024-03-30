@@ -2,6 +2,7 @@ import os
 
 from Product import Product
 from DBModule import Database
+from concurrent.futures import ThreadPoolExecutor
 
 # Dont make a static db. Allow to change?
 db = Database("price.db")
@@ -17,8 +18,6 @@ def clear_console():
     print("|--------------|")
     print("| Price-thingy | - Netonnet edition")
     print("|--------------|")
-
-    print(db.columns)
 
 
 def print_db(products: list):
@@ -180,10 +179,19 @@ def update_all_menu():
 
     products = db.dump_db()
 
-    for product in products:
-        if product.update():
-            db.update_product_data(product)
-            products_updated += 1
+    # lambda this?
+    def test_update(product):
+
+        return product.update()
+
+    # Creates a threadpool with 8 threads.
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        # Executes the test_update function on every product parallel, saves result to a map in updated_products
+        updated_products = executor.map(test_update, products)
+
+    # Commits updated_products to database
+    for product in updated_products:
+        db.update_product_data(product)
 
     print(f"{products_updated} product(s) updated.")
     input()
