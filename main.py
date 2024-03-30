@@ -1,6 +1,6 @@
 import os
 
-from ExtractData import ExtractData
+from Product import Product
 from DBModule import Database
 
 # Dont make a static db. Allow to change?
@@ -17,6 +17,8 @@ def clear_console():
     print("|--------------|")
     print("| Price-thingy | - Netonnet edition")
     print("|--------------|")
+
+    print(db.columns)
 
 
 def print_db(products: list):
@@ -92,7 +94,7 @@ def remove_menu():
         except ValueError:
             match user_choice:
                 case "p":
-                    print_db(db.print_db())
+                    print_db(db.dump_db())
                     input()
                 case "b":
                     break
@@ -117,7 +119,8 @@ def update_menu():
 
             product = db.get_product_data(user_choice)
 
-            if db.update_product_data(product):
+            if product.update():
+                db.update_product_data(product)
                 print(f"{product.name} updated.")
                 input()
                 continue
@@ -141,7 +144,7 @@ def add_menu():
     clear_console()
 
     url = input("URL: ")
-    product = ExtractData(url)
+    product = Product(("url", url))
 
     if db.insert_product_data(product):
         print(f"Added {product.name} to database.")
@@ -168,6 +171,22 @@ def search_menu():
 
         print_db(result)
         input()
+
+
+def update_all_menu():
+    """updates all items in the database, returns an int of rows updated."""
+
+    products_updated = 0
+
+    products = db.dump_db()
+
+    for product in products:
+        if product.update():
+            db.update_product_data(product)
+            products_updated += 1
+
+    print(f"{products_updated} product(s) updated.")
+    input()
 
 
 def format_price(price: int) -> str:
@@ -212,9 +231,7 @@ def main():
                 update_menu()
 
             case "5":
-                rows_updated = db.update_all()
-                print(f"{rows_updated} product(s) updated.")
-                input()
+                update_all_menu()
 
             case "p":
                 print_db(db.dump_db())
