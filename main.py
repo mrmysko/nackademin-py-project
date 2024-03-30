@@ -1,7 +1,8 @@
 import os
 
-from ExtractData import ExtractData
+from Product import Product
 from DBModule import Database
+from concurrent.futures import ThreadPoolExecutor
 
 # Dont make a static db. Allow to change?
 db = Database("price.db")
@@ -92,7 +93,7 @@ def remove_menu():
         except ValueError:
             match user_choice:
                 case "p":
-                    print_db(db.print_db())
+                    print_db(db.dump_db())
                     input()
                 case "b":
                     break
@@ -117,7 +118,8 @@ def update_menu():
 
             product = db.get_product_data(user_choice)
 
-            if db.update_product_data(product):
+            if product.update():
+                db.update_product_data(product)
                 print(f"{product.name} updated.")
                 input()
                 continue
@@ -141,7 +143,7 @@ def add_menu():
     clear_console()
 
     url = input("URL: ")
-    product = ExtractData(url)
+    product = Product(("url", url))
 
     if db.insert_product_data(product):
         print(f"Added {product.name} to database.")
@@ -168,6 +170,31 @@ def search_menu():
 
         print_db(result)
         input()
+
+
+def update_all_menu():
+    """updates all items in the database, returns an int of rows updated."""
+
+    products_updated = 0
+
+    products = db.dump_db()
+
+    # lambda this?
+    def test_update(product):
+
+        return product.update()
+
+    # Creates a threadpool with 8 threads.
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        # Executes the test_update function on every product parallel, saves result to a map in updated_products
+        updated_products = executor.map(test_update, products)
+
+    # Commits updated_products to database
+    for product in updated_products:
+        db.update_product_data(product)
+
+    print(f"{products_updated} product(s) updated.")
+    input()
 
 
 def format_price(price: int) -> str:
@@ -212,9 +239,7 @@ def main():
                 update_menu()
 
             case "5":
-                rows_updated = db.update_all()
-                print(f"{rows_updated} product(s) updated.")
-                input()
+                update_all_menu()
 
             case "p":
                 print_db(db.dump_db())
