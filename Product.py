@@ -15,18 +15,6 @@ class Product:
     def __str__(self):
         return self.name
 
-    def __data__(self):
-        """this is just to pass a class-objekt in a format the db can parse."""
-
-        return (
-            self.name,
-            self.price,
-            self.url,
-            self.last_updated,
-            self.lowest_price,
-            self.lowest_price_date,
-        )
-
     def update(self):
         # This should probably be changed to just update if anything is changed.
         self.name, self.price, self.last_updated = ExtractData(self.url)

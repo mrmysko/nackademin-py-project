@@ -47,34 +47,39 @@ class Database:
 
         self.cursor.execute(
             "INSERT INTO products ('name', 'price', 'url', 'last_updated', 'lowest_price', 'lowest_price_date') VALUES (?, ?, ?, ?, ?, ?)",
-            product.__data__(),
+            (
+                product.name,
+                product.price,
+                product.url,
+                product.last_updated,
+                product.lowest_price,
+                product.lowest_price_date,
+            ),
         )
 
         self.connection.commit()
         return self.cursor.rowcount
 
-    def remove_product_data(self, product) -> bool:
+    def remove_product_data(self, product) -> int:
         """removes items from the database."""
 
-        if self.cursor.execute("DELETE FROM products WHERE id = ?", (product.id,)):
-            self.connection.commit()
-            return True
+        self.cursor.execute("DELETE FROM products WHERE id = ?", (product.id,))
+        self.connection.commit()
+        return self.cursor.rowcount
 
     def update_product_data(self, product: Product) -> int:
         """updates a products data."""
 
-        update_tuple = (
-            product.name,
-            product.price,
-            product.last_updated,
-            product.lowest_price,
-            product.lowest_price_date,
-            product.url,
-        )
-
         self.cursor.execute(
             "UPDATE products SET name = ?, price = ?, last_updated = ?, lowest_price = ?, lowest_price_date = ? WHERE url = ?",
-            update_tuple,
+            (
+                product.name,
+                product.price,
+                product.last_updated,
+                product.lowest_price,
+                product.lowest_price_date,
+                product.url,
+            ),
         )
 
         self.connection.commit()
