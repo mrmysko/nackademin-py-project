@@ -98,7 +98,11 @@ Version 0.52-03.30  : ThreadPool för requests, refactor product update.
 
 Version 0.53: "Deamon-mode"
 
+Version 0.531: Error-handling.
+
 Version 0.54: Mail-alerting.
+
+Version 0.6: Feature freeze, testing, bug-hunting.
 
 ```
 Grejer man kan bygga på:

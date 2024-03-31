@@ -21,9 +21,20 @@
 # Todo - Merge update och insert data.
         - update tar ett id -> hämtar product_data -> kör dens update() -> Kollar om datan är uppdaterad 
                                                                             -> om inte, break -> annars skicka till insert som uppdaterar i db.
+# Todo - Uppdatera automatiskt hela tiden med threading?
 
 # Todo - Uppdatera bara databasen när product.update() får ny data.
 # Todo - I update_all, räkna hur många produkter som faktiskt blev uppdaterade.
 # Todo - Det är något wonky med price och lowest_price, den ena har ett komma som tusendelare. (gör ingen skillnad för comparison, men ändå.)
 # Todo - Hämta db från foldern main ligger i, inte därifrån användaren är.
 # Todo - Flera program på samma databas, stäng connection när den inte används annars blir databasen locked?
+
+# Logga update_all output till konsolen och en fil? https://betterstack.com/community/questions/how-to-log-to-file-and-console-in-python/
+# SIGTERM - https://stackoverflow.com/questions/18499497/how-to-process-sigterm-signal-gracefully
+# https://www.geeksforgeeks.org/python-os-kill-method/
+
+# Mail alert - Skicka ett mail med vad som är uppdaterat, var någonstans och nya priset.
+# smtplib
+
+
+# Todo - Fixa update output, logga daemon till en fil.

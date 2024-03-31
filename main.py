@@ -7,10 +7,6 @@ from Product import Product
 from DBModule import Database
 from concurrent.futures import ThreadPoolExecutor
 
-# Dont make a static db. Allow to change?
-# Opens price.db placed in programs root folder.
-db = Database(sys.path[0] + "\\price.db")
-
 
 def clear_console():
     """clears the console on both windows and unix systems."""
@@ -59,7 +55,7 @@ def print_db(products: list):
 #        )
 
 
-def remove_menu():
+def remove_menu(db: Database):
     """user-facing menu for removing items from database."""
 
     while True:
@@ -104,7 +100,7 @@ def remove_menu():
                     pass
 
 
-def update_menu():
+def update_menu(db: Database):
     """user-facing menu for updating database items."""
 
     while True:
@@ -142,7 +138,7 @@ def update_menu():
                     pass
 
 
-def add_menu():
+def add_menu(db: Database):
     """user-facing menu for adding items to database."""
 
     clear_console()
@@ -156,7 +152,7 @@ def add_menu():
         input("Could not add to database.")
 
 
-def search_menu():
+def search_menu(db: Database):
     while True:
         clear_console()
 
@@ -180,7 +176,7 @@ def search_menu():
                 input("No matches.")
 
 
-def update_all_menu():
+def update_all() -> int:
     """updates all items in the database"""
 
     products_updated = 0
@@ -201,11 +197,7 @@ def update_all_menu():
         # Right now this will always increment because last_updated will always change.
         products_updated += db.update_product_data(product)
 
-    # Dont wait for user input if run as daemon.
-    if args.daemon:
-        print(f"{products_updated} product(s) updated.")
-    else:
-        input(f"{products_updated} product(s) updated.")
+    return products_updated
 
 
 def format_price(price: int) -> str:
@@ -216,7 +208,7 @@ def format_price(price: int) -> str:
     return price
 
 
-def main():
+def main(db: Database):
     menu_items = {
         "1": "Search DB",
         "2": "Add item",
@@ -237,19 +229,19 @@ def main():
 
         match user_choice:
             case "1":
-                search_menu()
+                search_menu(db)
 
             case "2":
-                add_menu()
+                add_menu(db)
 
             case "3":
-                remove_menu()
+                remove_menu(db)
 
             case "4":
-                update_menu()
+                update_menu(db)
 
             case "5":
-                update_all_menu()
+                input(f"{update_all()} product(s) updated.")
 
             case "p":
                 print_db(db.dump_db())
@@ -269,9 +261,24 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.daemon:
-        # Run update_all every 3 minutes.
+        print("Running update_all every 3 minutes.")
+        # Not adding as a background task, it would be tedious to try to kill it if its not user facing.
+        # Run as a task or cronjob to update continuously instead.
         while True:
             time.sleep(180)
-            update_all_menu()
+
+            db = Database(sys.path[0] + "\\price.db")
+
+            print(
+                f"{time.strftime("%H:%M", time.localtime())} | {update_all()} product(s) updated."
+            )
+
+            # Close db so someone can edit it while not updating.
+            db.close_db()
+
     else:
-        main()
+        # Dont make a static db. Allow to change?
+        # Opens price.db placed in programs root folder.
+        db = Database(sys.path[0] + "\\price.db")
+
+        main(db)
