@@ -11,30 +11,21 @@
 # Ide - Om jag associerar id med en produkt, så kan jag implementera en __next__ och iterera över objekten? Så varje call till next hämtar nästa produkt från databasen?
 # Use with statements to close db-connection and cursor when done.
 
-# Todo - Få ut mer data/kategorier från items? https://www.netonnet.se/art/dator-surfplatta/laptop/laptop-14-16-tum/angstrom-angstrom-m1home/1028915.8908/ t.ex. Kommer ut som "Ångström  (M1HOME)", vilket inte säger någonting. (Det är en laptop btw.)
-# Todo - Options (verbose?) och mer output när saker händer till konsolen.
-# Todo - Felhantering: Fel länk, hittar inte element, databasen går inte att öppna, hittar inte någor i databasen, om användaren skriver in fel.
-# Todo - Regex clean url, also move it to class method.
-# Todo - Update progressbar
-# Todo - Print sorting options
-¤ Todo - Som less/more att den printar 10 rader i taget.
-# Todo - Merge update och insert data.
-        - update tar ett id -> hämtar product_data -> kör dens update() -> Kollar om datan är uppdaterad 
-                                                                            -> om inte, break -> annars skicka till insert som uppdaterar i db.
-# Todo - Uppdatera automatiskt hela tiden med threading?
-
-# Todo - Uppdatera bara databasen när product.update() får ny data.
-# Todo - I update_all, räkna hur många produkter som faktiskt blev uppdaterade.
-# Todo - Det är något wonky med price och lowest_price, den ena har ett komma som tusendelare. (gör ingen skillnad för comparison, men ändå.)
-# Todo - Hämta db från foldern main ligger i, inte därifrån användaren är.
-# Todo - Flera program på samma databas, stäng connection när den inte används annars blir databasen locked?
-
 # Logga update_all output till konsolen och en fil? https://betterstack.com/community/questions/how-to-log-to-file-and-console-in-python/
 # SIGTERM - https://stackoverflow.com/questions/18499497/how-to-process-sigterm-signal-gracefully
 # https://www.geeksforgeeks.org/python-os-kill-method/
 
-# Mail alert - Skicka ett mail med vad som är uppdaterat, var någonstans och nya priset.
-# smtplib
 
+# Error-handling:
 
-# Todo - Fixa update output, logga daemon till en fil.
+Fel länk. - soup returnerar ett AttributeError för att den inte hittar diven som den letar efter. Hur ska det hanteras? Ge användaren en konsoloutput "Bad link.", men hur? 
+# Känns inte riktigt kosher, det är 2 try i olika filer som fångar olika errors och en if som kollar om en self.corrupt flagga är satt för att kunna discarda ett object som en "bad link"? Inget mer specifikt, vad är det som är fel?
+
+Webbserver unreachable - Om requests.get inte kan komma åt servern.
+# Samma här, båda hanteras i ExtractData som returnerar False, det blir ett TypeError i Product-klassen som leder till en "Bad link" i add_menu().
+
+Databasen unreachable - Om databasen är locked eller rättighetsproblem som inte kan skapa en ny db när programmet körs.
+# 
+
+Indexerings-fel - Användaren skriver in ett index som inte finns i databasen.
+#

@@ -153,6 +153,8 @@ def add_menu(db: Database):
 
 
 def search_menu(db: Database):
+    """search database for a search_term"""
+
     while True:
         clear_console()
 

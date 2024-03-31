@@ -82,30 +82,15 @@ Motivering? Börjar väl med research idag.
 
 ## Arbetsplan
 
-Version 0.1-03.26   : Hämta data och få ut relevant information, visa den i terminalen.
+Version 0.1: Hämta data och få ut relevant information, visa den i terminalen.
 
-Version 0.2-03.26   : Spara datan i en databas, kunna få ut den därifrån.
-
-Version 0.3-03.27   : Uppdatera och ta bort produkter.
-
-Version 0.4-03.27   : Sök i databasen.
-
-Version 0.5-03.28   : Refactor koppling mellan products och db.
-
-Version 0.51-03.28  : Timestamps och lägst sedda pris.
-
-Version 0.52-03.30  : ThreadPool för requests, refactor product update.
-
-Version 0.53: "Deamon-mode"
-
-Version 0.531: Error-handling.
-
-Version 0.54: Mail-alerting.
-
-Version 0.6: Feature freeze, testing, bug-hunting.
+Version 0.2: Spara datan i en databas, kunna få ut den därifrån.
 
 ```
 Grejer man kan bygga på:
+    - Spara datan i en databas.
+    - Om datan sparas i en databas, ha en metod för att uppdatera pris.
+    - Visa alla grejer formaterade.
     - Lägga till fler butiker för samma produkt.
     - Hämta prisdata för samma produkt i olika färger.
     - Hantera användarinloggning för medlemspriser?
@@ -115,7 +100,5 @@ Grejer man kan bygga på:
     - Leta upp produkter från en butik i andra butiker.
     - Crawla en webbutik med Scrapy.
     - Alternativa input-metoder, cli-args OCH meny.
-    - Om automatisk uppdatering är implementerat, skicka mail vid prisförändring.
-    - Inställningar som sparas i ett databas-table.
     - GUI
 ```

@@ -20,14 +20,12 @@ def ExtractData(url: str) -> tuple:
     # Instantiates a bs-object with request-content and lxml as parser.
     soup = BeautifulSoup(site_content.content, "lxml")
 
-    # Extracts the name of the product.:
+    # Extracts name and price.
     name = soup.find("div", {"class": "subTitle big"}).get_text().strip()
+    price = soup.find("div", {"class": "price-big"}).get_text().strip()
 
     # Remove art nr from name.
     name = re.sub(" Art.nr:.*$", "", name).strip()
-
-    # Selects the div with classname "price-big", gets the text inside the div and strips it of whitespace. Prints as e.g. "2 990:-"
-    price = soup.find("div", {"class": "price-big"}).get_text().strip()
 
     # Removes ":-" from price and converts to an int.
     # Although, when I display it later I want ":-", but it's easier to work with an int for comparison etc and different stores might display price differently.
@@ -35,9 +33,6 @@ def ExtractData(url: str) -> tuple:
     price = re.sub(":-$", "", price)
     price = "".join(price.split()).strip()
     price = int(price)
-
-    # Cleans url - This is not foolproof though, needs improvements.
-    # url = re.sub("?.*", "", url)
 
     last_updated = datetime.now().isoformat()
 
