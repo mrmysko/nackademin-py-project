@@ -35,4 +35,4 @@ trap 'rv=$?; deactivate &>/dev/null; exit $rv' EXIT
 
 setup &>/dev/null
 
-python_wrapper ▚ "$@" # Byt ▚ till ditt skripts namn.
+python_wrapper "main.py" "$@"

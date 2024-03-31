@@ -49,6 +49,8 @@ En url kan lägga på massa en massa grejer som inte behövs för att komma åt 
 
 Det borde finnas nån funktion i SQLite som kan uppdatera data om den finns, men inserta om den inte finns.
 
+(Efter lite research verkar det som att det bästa sättet är två queries, så skickar datan till update först och om den ger tillbaka 0 rowcount så går den vidare till insert.)
+
 ### Mail-alering
 
 Om ett pris ändras, använd smtplib för att maila om det.

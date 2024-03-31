@@ -146,10 +146,14 @@ def add_menu(db: Database):
     url = input("URL: ")
     product = Product(("url", url))
 
-    if db.insert_product_data(product):
-        input(f"Added {product.name} to database.")
+    # Check if product is in database, else add it.
+    if not db.update_product_data(product):
+        if not db.insert_product_data(product):
+            input(f"Could not add {product.name} to database.")
+        else:
+            input(f"Added {product.name} to database.")
     else:
-        input("Could not add to database.")
+        input(f"{product.name} updated.")
 
 
 def search_menu(db: Database):
@@ -282,5 +286,6 @@ if __name__ == "__main__":
         # Dont make a static db. Allow to change?
         # Opens price.db placed in programs root folder.
         db = Database(sys.path[0] + "\\price.db")
+        # db = Database(sys.path[0] + "\\edited_db.db")
 
         main(db)
