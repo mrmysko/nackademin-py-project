@@ -1,5 +1,7 @@
 import os
 import sys
+import argparse
+import time
 
 from Product import Product
 from DBModule import Database
@@ -26,7 +28,7 @@ def print_db(products: list):
     """prints the content of a database formatted."""
 
     if not products:
-        print("No match.")
+        print("Database empty.")
         return
 
     # Get longest db-name for rjust length.
@@ -87,8 +89,7 @@ def remove_menu():
             match user_confirm.lower():
                 case "y":
                     if db.remove_product_data(product):
-                        print(f"{product.name} removed.")
-                        input()
+                        input(f"{product.name} removed.")
                 case _:
                     pass
 
@@ -121,10 +122,12 @@ def update_menu():
             product = db.get_product_data(user_choice)
 
             if product.update():
-                db.update_product_data(product)
-                print(f"{product.name} updated.")
-                input()
-                continue
+                if db.update_product_data(product):
+                    input(f"{product.name} updated.")
+                    continue
+                else:
+                    input("Could not update database.")
+                    continue
             print(f"{product.name} already up to date.")
             input()
 
@@ -148,33 +151,37 @@ def add_menu():
     product = Product(("url", url))
 
     if db.insert_product_data(product):
-        print(f"Added {product.name} to database.")
-        input()
+        input(f"Added {product.name} to database.")
+    else:
+        input("Could not add to database.")
 
 
 def search_menu():
     while True:
         clear_console()
 
+        print("p. Print db.")
         print("b. Go back.")
 
         search_term = input("Search: ")
 
         match search_term:
+            case "p":
+                print_db(db.dump_db())
+                input()
             case "b":
                 break
-
             case _:
-                pass
-
-        result = db.search_db(search_term)
-
-        print_db(result)
-        input()
+                result = db.search_db(search_term)
+                if result:
+                    print_db(result)
+                    input()
+                    continue
+                input("No matches.")
 
 
 def update_all_menu():
-    """updates all items in the database, returns an int of rows updated."""
+    """updates all items in the database"""
 
     products_updated = 0
 
@@ -191,10 +198,14 @@ def update_all_menu():
 
     # Commits updated_products to database
     for product in updated_products:
-        db.update_product_data(product)
+        # Right now this will always increment because last_updated will always change.
+        products_updated += db.update_product_data(product)
 
-    print(f"{products_updated} product(s) updated.")
-    input()
+    # Dont wait for user input if run as daemon.
+    if args.daemon:
+        print(f"{products_updated} product(s) updated.")
+    else:
+        input(f"{products_updated} product(s) updated.")
 
 
 def format_price(price: int) -> str:
@@ -253,4 +264,14 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="A price-thingy.")
+    parser.add_argument("-d", "--daemon", help="update database", action="store_true")
+    args = parser.parse_args()
+
+    if args.daemon:
+        # Run update_all every 3 minutes.
+        while True:
+            time.sleep(180)
+            update_all_menu()
+    else:
+        main()
