@@ -15,7 +15,7 @@ def mail_alert(products: list):
     recipient = "robin.kavenius@live.se"
 
     # In the final version, dont do dump_db here, just add a list of products actually updated.
-    message = format_message(db.dump_db())
+    message = format_message(products)
 
     # Create a mail object.
     email = EmailMessage()
@@ -29,7 +29,7 @@ def mail_alert(products: list):
     smtp.starttls()
 
     # Using my personal outlook mail.
-    smtp.login("orkar_-.-@hotmail.com", "redacted")
+    smtp.login("orkar_-.-@hotmail.com", "yafsdnebhgxkbfbn")
     smtp.sendmail(sender, recipient, email.as_string())
     smtp.quit()
 

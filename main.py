@@ -169,6 +169,30 @@ def update_all() -> int:
     return products_updated
 
 
+def check_update(product: Product) -> int:
+    """check if a product has updated data, returns three states depending on has updated-"""
+
+    # Creates a new product-object from the supplied products url.
+    updated_product = Product(product.url)
+
+    # If the price of the updated product is the same as the database value. Return False. Mothing has updated.
+    if updated_product.price == product.price:
+        return 1
+
+    # Else set the price of the product to the price of the updated product.
+    else:
+        product.price = updated_product
+        product.last_updated = updated_product.last_updated
+
+        # If the new price is lower, also set the products lowest_price.
+        if product.price <= product.lowest_price:
+            product.lowest_price = product.price
+            product.lowest_price_date = product.last_updated
+            return 3
+
+        return 2
+
+
 def main(db: Database):
     menu_items = {
         "1": "Search DB",

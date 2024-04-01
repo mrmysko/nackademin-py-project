@@ -14,6 +14,8 @@ Just nu uppdaterar update varje gång, även om datan va samma.
 
 Men samtidigt så kanske man vill uppdatera för att last_updated ska uppdateras, så man vet senaste requesten?
 
+Hur skulle det här fungera? Är det logiskt att produkt-klassen själv ska ha hand om checken för om datan är uppdaterad? Insert kommer alltid returnera 1 om den kunde sätta in datan, så checken måste ske innan flödet går till databas-modulen.
+
 ### Fel-hantering
 
 - Hantera om användaren skriver in ett index som inte finns i databasen.
@@ -77,3 +79,7 @@ Få ut art nr från url elr html, leta efter pris med bs4 typ find("h2", {"name"
 Mail-alert fungerar, men den är ganska kass.
 
 Den borde bara maila de produkter som fått ett lägre pris.
+
+### Stäng databasen
+
+Databasen står öppen när programmet körs, även om den inte används till något. Stäng den efter varje operation, eller använd "with" för att göra det automatiskt.
