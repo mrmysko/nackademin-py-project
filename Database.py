@@ -90,7 +90,7 @@ class Database:
         """creates product objects from rows in a given cursor object"""
 
         # List to store zip objects with col, value tuples.
-        tupled_values = []
+        tupled_values = list()
 
         # Creates a list of zip objects consisting of col, value pairs.
         """printing tupled_values gives [zip-object, zip-object, zip-object...]

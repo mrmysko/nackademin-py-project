@@ -19,9 +19,3 @@ Version 0.54-04.01  : Mail-alerting.
 Version 0.541: Error-handling.
 
 Version 0.6: Feature freeze, testing, bug-hunting.
-
-Ta bort lowest_price grejen från produktobjektet ->
-
-Hämta ett prisobjekt från databasen -> Hämta ett prisobjekt från en url
-
-Jämför båda objektens pris, om urlen är annorlunda än databasen -> skicka urlen till insert
