@@ -1,5 +1,15 @@
 # TODO (Osorterad)
 
+### Faktorisera om
+
+Gör om, gör rätt.
+
+### Fixa mail-alert
+
+Jag mailar om användaren manuellt kör en update all i CLI, onödigt.
+
+Just nu mailar jag om priset är lägre än det lägsta, men jag borde maila om priset är lägre än nuvarnade, oavsett vad det lägsta var...Typ "product price now x, was y, lowest ever z"
+
 ### Få ut mer data/kategorier från produkter
 
 <https://www.netonnet.se/art/dator-surfplatta/laptop/laptop-14-16-tum/angstrom-angstrom-m1home/1028915.8908/> t.ex. Kommer ut som "Ångström  (M1HOME)", vilket inte säger någonting. (Det är en laptop btw.) t.ex. kan man få ut kategorier från breadcrumben.
@@ -7,14 +17,6 @@
 ### Update progressbar
 
 En progressbar för uppdate_all.
-
-### Uppdatera bara databasen när product.update() får ny data
-
-Just nu uppdaterar update varje gång, även om datan va samma.
-
-Men samtidigt så kanske man vill uppdatera för att last_updated ska uppdateras, så man vet senaste requesten?
-
-Hur skulle det här fungera? Är det logiskt att produkt-klassen själv ska ha hand om checken för om datan är uppdaterad? Insert kommer alltid returnera 1 om den kunde sätta in datan, så checken måste ske innan flödet går till databas-modulen.
 
 ### Fel-hantering
 
@@ -34,6 +36,8 @@ Sorteringsinställningar, bara visa x-antal rader i taget som less/more etc.
 ### Uppdatera med threading
 
 Använd threading för att uppdatera databasen kontinuerligt, även om programmet väntar på användarinput eller håller på med något annat.
+
+Sätt update_all funktionen i en subprocess.
 
 ### Logga meddelanden
 
@@ -74,12 +78,10 @@ Genereras med javascript, så priset renderas på annat sätt. requests kör int
 
 Få ut art nr från url elr html, leta efter pris med bs4 typ find("h2", {"name": "1026559-price"}.get_text(strip=True))
 
-### Mail-alert ändringar
-
-Mail-alert fungerar, men den är ganska kass.
-
-Den borde bara maila de produkter som fått ett lägre pris.
-
 ### Stäng databasen
 
 Databasen står öppen när programmet körs, även om den inte används till något. Stäng den efter varje operation, eller använd "with" för att göra det automatiskt.
+
+### Butikslogin
+
+Hantera butiksinloggning för medlemspriser.
