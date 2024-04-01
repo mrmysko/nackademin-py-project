@@ -2,7 +2,6 @@ import smtplib
 
 from email.message import EmailMessage
 from FormatMessage import format_message
-from DBModule import Database
 
 # Need both smtplib to establish the connection to the mail server
 # and EmailMessage to compose the mail to send.
@@ -15,7 +14,7 @@ def mail_alert(products: list):
     recipient = "robin.kavenius@live.se"
 
     # In the final version, dont do dump_db here, just add a list of products actually updated.
-    message = format_message(db.dump_db())
+    message = format_message(products)
 
     # Create a mail object.
     email = EmailMessage()
@@ -29,14 +28,10 @@ def mail_alert(products: list):
     smtp.starttls()
 
     # Using my personal outlook mail.
-    smtp.login("orkar_-.-@hotmail.com", "redacted")
+    smtp.login("orkar_-.-@hotmail.com", "pass")  # Password redacted
     smtp.sendmail(sender, recipient, email.as_string())
     smtp.quit()
 
 
 if __name__ == "__main__":
-    db = Database("price.db")
-
-    products = db.dump_db()
-
-    mail_alert(products)
+    pass

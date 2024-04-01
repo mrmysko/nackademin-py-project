@@ -2,6 +2,8 @@ from ExtractData import ExtractData
 
 
 class Product:
+    """creates a product-object"""
+
     def __init__(self, *args):
         # Unpacks and dynamically assigns variables.
         for attr, value in args:
@@ -19,7 +21,7 @@ class Product:
         # This should probably be changed to just update if anything is changed.
         self.name, self.price, self.last_updated = ExtractData(self.url)
 
-        if not hasattr(self, "lowest_price") or self.price < self.lowest_price:
+        if not hasattr(self, "lowest_price"):
             self.lowest_price = self.price
             self.lowest_price_date = self.last_updated
 

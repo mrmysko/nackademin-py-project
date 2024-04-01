@@ -4,9 +4,10 @@ import argparse
 import time
 
 from Product import Product
-from DBModule import Database
+from Database import Database
 from concurrent.futures import ThreadPoolExecutor
 from FormatMessage import format_message
+from MailAlert import mail_alert
 
 
 def clear_console():
@@ -83,7 +84,10 @@ def update_menu(db: Database):
 
             product = db.get_product_data(user_choice)
 
-            if product.update():
+            status, product = check_update(product)
+
+            # Status 2 in a manual update doesnt require a mail.
+            if status == 1 or status == 2:
                 if db.insert_product_data(product):
                     input(f"{product.name} updated.")
                     continue
@@ -148,25 +152,56 @@ def search_menu(db: Database):
 def update_all() -> int:
     """updates all items in the database"""
 
+    mail_products = list()
     products_updated = 0
 
     products = db.dump_db()
 
-    # lambda this?
-    def test_update(product):
-        return product.update()
-
     # Creates a threadpool with 8 threads.
     with ThreadPoolExecutor(max_workers=8) as executor:
         # Executes the test_update function on every product parallel, saves result to a map in updated_products
-        updated_products = executor.map(test_update, products)
+        updated_products = executor.map(check_update, products)
 
     # Commits updated_products to database
-    for product in updated_products:
+    for state, product in updated_products:
         # Right now this will always increment because last_updated will always change.
-        products_updated += db.insert_product_data(product)
+        if state >= 1:
+            products_updated += db.insert_product_data(product)
+            if state == 2:
+                mail_products.append(product)
+
+    # Send mail if list is not empty.
+    if mail_products:
+        mail_alert(mail_products)
 
     return products_updated
+
+
+def check_update(product: Product) -> tuple:
+    """check if a product has updated data, returns three states and the product depending on has updated.\n
+    0 - Do nothing, nothing has updated.\n
+    1 - Insert updated product in db.\n
+    2 - Insert AND mail about lower price."""
+
+    # Creates a new product-object from the supplied products url.
+    updated_product = Product(("url", product.url))
+
+    # If the price of the updated product is the same as the database value. Return False. Mothing has updated.
+    if updated_product.price == product.price:
+        return (0, product)
+
+    # Else set the price of the product to the price of the updated product.
+    else:
+        product.price = updated_product.price
+        product.last_updated = updated_product.last_updated
+
+        # If the new price is lower, also set the products lowest_price.
+        if product.price < product.lowest_price:
+            product.lowest_price = product.price
+            product.lowest_price_date = product.last_updated
+            return (2, product)
+
+        return (1, product)
 
 
 def main(db: Database):
