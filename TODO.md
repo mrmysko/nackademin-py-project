@@ -2,7 +2,7 @@
 
 ### Få ut mer data/kategorier från produkter
 
-<https://www.netonnet.se/art/dator-surfplatta/laptop/laptop-14-16-tum/angstrom-angstrom-m1home/1028915.8908/> t.ex. Kommer ut som "Ångström  (M1HOME)", vilket inte säger någonting. (Det är en laptop btw.)
+<https://www.netonnet.se/art/dator-surfplatta/laptop/laptop-14-16-tum/angstrom-angstrom-m1home/1028915.8908/> t.ex. Kommer ut som "Ångström  (M1HOME)", vilket inte säger någonting. (Det är en laptop btw.) t.ex. kan man få ut kategorier från breadcrumben.
 
 ### Update progressbar
 
@@ -45,16 +45,13 @@ Update visar inte hur många saker som faktiskt blivit uppdaterade just nu.
 
 En url kan lägga på massa en massa grejer som inte behövs för att komma åt en sida. Och en url som lagt på massa data kommer inte matcha varandra i update.
 
-### Mail-alering
+### Statistik
 
-Om ett pris ändras, använd smtplib för att maila om det.
+Mer statistik så som hur länge priset legat, tids-graf, olika priser i olika butiker vid olika tidpunkter etc.
 
-Hur fungerar det nu?
+### GUI
 
-update_all() dumpar databasen till en lista med produkter -> Loopar .update() över den med threadpool -> Skickar dom uppdaterade produkterna till db.update_product_data()
-
-Vad skulle krävas?
-Att .update() skickar tillbaka om priset faktiskt är uppdaterat. -> Om det är det, spara den produkten -> Skicka dom sparade produkterna till db.update_product_data OCH mail-funktionen.
+GUI för alla funktioner.
 
 ### Fler butiker
 
@@ -66,15 +63,17 @@ En produkt kan ofta ha olika priser i olika färger.
 
 Med urlen från en butik kunna hämta samma produkt från flera butiker.
 
-### Gör en maxlängd på namn
-
-<https://www.netonnet.se/art/mobil-smartwatch/smartwatch/apple-watch/apple-apple-watch-series-9-gps-45mm-midnight-aluminium-case-with-midnight-sport-band-ml/1031339.13980/>
-"Apple Watch Series 9 GPS 45mm Midnight Aluminium Case with Midnight Sport Band - M/L"
-
-Sätt en max längd på namn, typ 40 chars.
-
 ### "Hämta pris"
 
-Vissa netonnet-produkters sidor genereras med react och priset ligger i divar med random genererade namn, priser ligger i en h2-tag med "art-nr"-price som vissa attribut.
+<https://www.netonnet.se/art/tv/mediaspelare/google-chromecast/google-chromecast-with-google-tv-hd/1026559.18273>
+<https://www.netonnet.se/art/vitvaror/mikrovagsugn/andersson-mikrovagsugn-meo-2-6/226770.18008>
 
-För att hantera dom sidorna - Få ut art nr från url elr html, leta efter pris med bs4 typ find("h2", {"name": "1026559-price"}.get_text(strip=True))
+Genereras med javascript, så priset renderas på annat sätt. requests kör inte js. Priset ligger i en h2-tag med "art-nr"-price som vissa attribut.
+
+Få ut art nr från url elr html, leta efter pris med bs4 typ find("h2", {"name": "1026559-price"}.get_text(strip=True))
+
+### Mail-alert ändringar
+
+Mail-alert fungerar, men den är ganska kass.
+
+Den borde bara maila de produkter som fått ett lägre pris.

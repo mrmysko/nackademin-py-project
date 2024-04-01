@@ -68,24 +68,6 @@ class Database:
         self.connection.commit()
         return self.cursor.rowcount
 
-    #    def update_product_data(self, product: Product) -> int:
-    #        """updates a products data."""
-    #
-    #        self.cursor.execute(
-    #            "UPDATE products SET name = ?, price = ?, last_updated = ?, lowest_price = ?, lowest_price_date = ? WHERE url = ?",
-    #            (
-    #                product.name,
-    #                product.price,
-    #                product.last_updated,
-    #                product.lowest_price,
-    #                product.lowest_price_date,
-    #                product.url,
-    #            ),
-    #        )
-    #
-    #        self.connection.commit()
-    #        return self.cursor.rowcount
-
     def dump_db(self) -> list:
         """returns a list of product class-objects."""
 
