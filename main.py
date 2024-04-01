@@ -27,10 +27,13 @@ def print_db(products: list):
         print("Database empty.")
         return
 
-    # Get longest db-name for rjust length.
+    # Get longest db-name for rjust length. Also cap name printout to 40 chars.
     longest_name = 0
     for product in products:
-        if len(product.name) > longest_name:
+        if len(product.name) > 40:
+            longest_name = 40
+            break
+        elif len(product.name) > longest_name:
             longest_name = len(product.name)
 
     print(
@@ -40,7 +43,7 @@ def print_db(products: list):
     # Prints db right-justified by longest product name.
     for product in products:
         print(
-            f"{str(product.id).rjust(2)} | {product.name.rjust(longest_name)} | {format_price(product.price).rjust(10)} | {format_price(product.lowest_price).rjust(10)} | {product.url.rjust(0)}"
+            f"{str(product.id).rjust(2)} | {product.name[:longest_name].rjust(longest_name)} | {format_price(product.price).rjust(10)} | {format_price(product.lowest_price).rjust(10)} | {product.url.rjust(0)}"
         )
 
 
@@ -118,7 +121,7 @@ def update_menu(db: Database):
             product = db.get_product_data(user_choice)
 
             if product.update():
-                if db.update_product_data(product):
+                if db.insert_product_data(product):
                     input(f"{product.name} updated.")
                     continue
                 else:
@@ -147,13 +150,10 @@ def add_menu(db: Database):
     product = Product(("url", url))
 
     # Check if product is in database, else add it.
-    if not db.update_product_data(product):
-        if not db.insert_product_data(product):
-            input(f"Could not add {product.name} to database.")
-        else:
-            input(f"Added {product.name} to database.")
+    if not db.insert_product_data(product):
+        input(f"Could not add {product.name} to database.")
     else:
-        input(f"{product.name} updated.")
+        input(f"Added {product.name} to database.")
 
 
 def search_menu(db: Database):
@@ -201,7 +201,7 @@ def update_all() -> int:
     # Commits updated_products to database
     for product in updated_products:
         # Right now this will always increment because last_updated will always change.
-        products_updated += db.update_product_data(product)
+        products_updated += db.insert_product_data(product)
 
     return products_updated
 

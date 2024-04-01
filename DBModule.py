@@ -20,7 +20,7 @@ class Database:
             """CREATE TABLE IF NOT EXISTS products( 
                     id INTEGER PRIMARY KEY, 
                     name TEXT NOT NULL, 
-                    price TEXT, 
+                    price INTEGER, 
                     url TEXT NOT NULL,
                     last_updated TEXT,
                     lowest_price INTEGER,
@@ -46,8 +46,9 @@ class Database:
         """inserts data into the database."""
 
         self.cursor.execute(
-            "INSERT INTO products ('name', 'price', 'url', 'last_updated', 'lowest_price', 'lowest_price_date') VALUES (?, ?, ?, ?, ?, ?)",
+            "INSERT OR REPLACE INTO products ('id', 'name', 'price', 'url', 'last_updated', 'lowest_price', 'lowest_price_date') VALUES ((SELECT id FROM products WHERE url = ?), ?, ?, ?, ?, ?, ?)",
             (
+                product.url,
                 product.name,
                 product.price,
                 product.url,
@@ -67,23 +68,23 @@ class Database:
         self.connection.commit()
         return self.cursor.rowcount
 
-    def update_product_data(self, product: Product) -> int:
-        """updates a products data."""
-
-        self.cursor.execute(
-            "UPDATE products SET name = ?, price = ?, last_updated = ?, lowest_price = ?, lowest_price_date = ? WHERE url = ?",
-            (
-                product.name,
-                product.price,
-                product.last_updated,
-                product.lowest_price,
-                product.lowest_price_date,
-                product.url,
-            ),
-        )
-
-        self.connection.commit()
-        return self.cursor.rowcount
+    #    def update_product_data(self, product: Product) -> int:
+    #        """updates a products data."""
+    #
+    #        self.cursor.execute(
+    #            "UPDATE products SET name = ?, price = ?, last_updated = ?, lowest_price = ?, lowest_price_date = ? WHERE url = ?",
+    #            (
+    #                product.name,
+    #                product.price,
+    #                product.last_updated,
+    #                product.lowest_price,
+    #                product.lowest_price_date,
+    #                product.url,
+    #            ),
+    #        )
+    #
+    #        self.connection.commit()
+    #        return self.cursor.rowcount
 
     def dump_db(self) -> list:
         """returns a list of product class-objects."""
