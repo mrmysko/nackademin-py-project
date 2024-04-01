@@ -21,8 +21,10 @@ def ExtractData(url: str) -> tuple:
     soup = BeautifulSoup(site_content.content, "lxml")
 
     # Extracts name and price.
-    name = soup.find("div", {"class": "subTitle big"}).get_text().strip()
-    price = soup.find("div", {"class": "price-big"}).get_text().strip()
+    breadcrumb = soup.find("ol", {"class": "breadcrumb"})
+    name = breadcrumb.find("span").get_text(strip=True)
+
+    price = soup.find("div", {"class": "price-big"}).get_text(strip=True)
 
     # Remove art nr from name.
     name = re.sub(" Art.nr:.*$", "", name).strip()
