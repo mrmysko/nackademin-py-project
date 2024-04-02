@@ -21,7 +21,10 @@ def clear_console():
     print("| Price-thingy | - Netonnet edition")
     print("|--------------|")
 
-    print(os.get_terminal_size())  # Use to dynamically adjust name-length.
+    line = f'{"Hej" if True else ""}'
+    print(line)
+
+    print(os.get_terminal_size()[0])  # Use to dynamically adjust name-length.
 
 
 def remove_menu(db: Database):
