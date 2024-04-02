@@ -10,13 +10,29 @@ Jag mailar om användaren manuellt kör en update all i CLI, onödigt.
 
 Just nu mailar jag om priset är lägre än det lägsta, men jag borde maila om priset är lägre än nuvarnade, oavsett vad det lägsta var...Typ "product price now x, was y, lowest ever z"
 
+### Path-agnostisk
+
+Hämta path för db som funkar på både linux och windows.
+
+### Konsol-width
+
+Använd consolens column width för att sätta ett max-värde på ett produktnamn.
+
+MEN, om jag använder os.get_console_width för att justera bredden på outputen, mail_alert tar ett returvärde från format_message som kommer använda konsolbredden från när programmet kör mail_alert. Och vad händer om konsolen inte har en bredd?
+
+print(os.get_terminal_size()) - Use to dynamically adjust name-length.
+
 ### Få ut mer data/kategorier från produkter
 
-<https://www.netonnet.se/art/dator-surfplatta/laptop/laptop-14-16-tum/angstrom-angstrom-m1home/1028915.8908/> t.ex. Kommer ut som "Ångström  (M1HOME)", vilket inte säger någonting. (Det är en laptop btw.) t.ex. kan man få ut kategorier från breadcrumben.
+<https://www.netonnet.se/art/dator-surfplatta/laptop/laptop-14-16-tum/angstrom-angstrom-m1home/1028915.8908/> t.ex. Kommer ut som "Ångström (M1HOME)", vilket inte säger någonting. (Det är en laptop btw.) t.ex. kan man få ut kategorier från breadcrumben.
 
 ### Update progressbar
 
 En progressbar för uppdate_all.
+
+### kwargs
+
+Byt ut args i product-klassen till kwargs.
 
 ### Fel-hantering
 

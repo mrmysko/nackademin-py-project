@@ -10,7 +10,7 @@ class Database:
         self.file = file
 
         # Open a connection to the database.
-        self.connection = sqlite3.connect(file)
+        self.connection = sqlite3.connect(self.file)
 
         # Open a cursor to the database.
         self.cursor = self.connection.cursor()

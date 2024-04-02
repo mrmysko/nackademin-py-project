@@ -1,8 +1,8 @@
 import os
-import sys
 import argparse
 import time
 
+from pathlib import Path
 from Product import Product
 from Database import Database
 from concurrent.futures import ThreadPoolExecutor
@@ -20,6 +20,8 @@ def clear_console():
     print("|--------------|")
     print("| Price-thingy | - Netonnet edition")
     print("|--------------|")
+
+    print(os.get_terminal_size())  # Use to dynamically adjust name-length.
 
 
 def remove_menu(db: Database):
@@ -256,6 +258,12 @@ if __name__ == "__main__":
     parser.add_argument("-d", "--daemon", help="update database", action="store_true")
     args = parser.parse_args()
 
+    # Dont make a static db. Allow to change?
+    # Opens price.db placed in programs root folder.
+    db_path = Path(__file__).with_name("price.db")
+
+    db = Database(db_path)
+
     if args.daemon:
         print("Running update_all every 3 minutes.")
         # Not adding as a background task, it would be tedious to try to kill it if its not user facing.
@@ -263,19 +271,15 @@ if __name__ == "__main__":
         while True:
             time.sleep(180)
 
-            db = Database(sys.path[0] + "\\price.db")
+            # Open db connection. - This is legal?
+            db.__init__(db.file)
 
             print(
-                f"{time.strftime("%H:%M", time.localtime())} | {update_all()} product(s) updated."
+                f"{time.strftime('%H:%M', time.localtime())} | {update_all()} product(s) updated."
             )
 
             # Close db so someone can edit it while not updating.
             db.close_db()
 
     else:
-        # Dont make a static db. Allow to change?
-        # Opens price.db placed in programs root folder.
-        db = Database(sys.path[0] + "\\price.db")
-        # db = Database(sys.path[0] + "\\edited_db.db") # Test db
-
         main(db)

@@ -1,3 +1,6 @@
+import os
+
+
 def format_message(products: list):
     """prints the content of a database formatted."""
 
