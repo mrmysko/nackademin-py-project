@@ -1,6 +1,7 @@
 import os
 import argparse
 import time
+import requests
 
 from pathlib import Path
 from Product import Product
@@ -20,11 +21,6 @@ def clear_console():
     print("|--------------|")
     print("| Price-thingy | - Netonnet edition")
     print("|--------------|")
-
-    line = f'{"Hej" if True else ""}'
-    print(line)
-
-    print(os.get_terminal_size()[0])  # Use to dynamically adjust name-length.
 
 
 def remove_menu(db: Database):
@@ -49,6 +45,10 @@ def remove_menu(db: Database):
             int(user_choice)
 
             product = db.get_product_data(user_choice)
+
+            if not product:
+                input("Index not found.")
+                continue
 
             print(f"Confirm removal of: {product.name}")
             print("(y/n)")
@@ -89,7 +89,15 @@ def update_menu(db: Database):
 
             product = db.get_product_data(user_choice)
 
-            status, product = check_update(product)
+            if not product:
+                input("Index not found.")
+                continue
+
+            try:
+                status, product = check_update(product)
+            except requests.exceptions.ConnectionError:
+                input("Site unreachable.")
+                continue
 
             # Status 2 in a manual update doesnt require a mail.
             if status == 1 or status == 2:
@@ -119,13 +127,21 @@ def add_menu(db: Database):
     clear_console()
 
     url = input("URL: ")
-    product = Product(("url", url))
 
-    # Check if product is in database, else add it.
-    if not db.insert_product_data(product):
-        input(f"Could not add {product.name} to database.")
-    else:
-        input(f"Added {product.name} to database.")
+    try:
+        product = Product(("url", url))
+
+        # Check if product is in database, else add it.
+        if not db.insert_product_data(product):
+            input(f"Could not add {product.name} to database.")
+        else:
+            input(f"Added {product.name} to database.")
+
+    except AttributeError:
+        input("Data not found.")
+    # Do I really need to import requests just to catch a raised error?
+    except requests.exceptions.ConnectionError:
+        input("Site unreachable.")
 
 
 def search_menu(db: Database):
@@ -188,8 +204,11 @@ def check_update(product: Product) -> tuple:
     1 - Insert updated product in db.\n
     2 - Insert AND mail about lower price."""
 
-    # Creates a new product-object from the supplied products url.
-    updated_product = Product(("url", product.url))
+    try:
+        # Creates a new product-object from the supplied products url.
+        updated_product = Product(("url", product.url))
+    except requests.exceptions.ConnectionError:
+        raise
 
     # If the price of the updated product is the same as the database value. Return False. Mothing has updated.
     if updated_product.price == product.price:

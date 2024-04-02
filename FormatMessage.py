@@ -32,7 +32,8 @@ def format_message(products: list):
         # Multiline f-string looks very ugly...
         for product in products:
             message.append(
-                f"""{product.id}. - {product.name}
+                f"""{product.id}.{"-" * 30}
+| {product.name}
 |  Current Price: {format_price(product.price).rjust(10)}
 |   Lowest Price: {format_price(product.lowest_price).rjust(10)}
 | {product.url}"""

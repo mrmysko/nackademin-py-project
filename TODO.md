@@ -18,20 +18,22 @@ Just nu mailar jag om priset är lägre än det lägsta, men jag borde maila om 
 
 En progressbar för uppdate_all.
 
-### kwargs
-
-Byt ut args i product-klassen till kwargs.
-
 ### Fel-hantering
 
-- Hantera om användaren skriver in ett index som inte finns i databasen.
-- Om användaren skriver in en länk som inte har den data ExtractData letar efter.
+Hantera fel på ett bättre sätt...nu är det i princip tre try except som håller på och bubblar upp ett exception som fångas i main för om en användare skriver in en felaktig länk.
+
 - Om databasen inte är tillgänglig.
-- Om requests inte kan hämta webbsidan.
+  - Vad ska hända? = Raise nått fel och stäng programmet. Hur kan jag differentiera från olika sätt den är unavailable på? Locked/Permissions/Corrupt etc.
+
+- Om update_all inte kommer åt urlen.
 
 ### Verbosity
 
 Options/Argparse flagga för att öka output till konsolen.
+
+### Options table
+
+Ha options i uit och spara dom i databasen. t.ex. sorting/display options, update interval.
 
 ### Ökad formatering på databas-prints
 
@@ -45,13 +47,9 @@ Använd threading för att uppdatera databasen kontinuerligt, även om programme
 
 Sätt update_all funktionen i en subprocess.
 
-### Logga meddelanden
+### Loggfil
 
 Skicka grejer som hur många produkter som uppdaterades eller vad som lagts till till en loggfil.
-
-### Fixa update output
-
-Update visar inte hur många saker som faktiskt blivit uppdaterade just nu.
 
 ### Rensa urlen på onödig info
 
@@ -66,6 +64,8 @@ Mer statistik så som hur länge priset legat, tids-graf, olika priser i olika b
 GUI för alla funktioner.
 
 ### Fler butiker
+
+Amazon, Inet, Webhallen, Komplett etc...speciellt Amazon eftersom deras sida är oöverskådlig och dom byter priser när som helst baserat på vad som helst.
 
 ### Samma modell i olika färg
 
@@ -88,6 +88,26 @@ Få ut art nr från url elr html, leta efter pris med bs4 typ find("h2", {"name"
 
 Databasen står öppen när programmet körs, även om den inte används till något. Stäng den efter varje operation, eller använd "with" för att göra det automatiskt.
 
+(Det spelar ingen roll om connectionen till databsen är öppen, vad som spelar roll är att någon inte försöker göra något samtidigt som data commitas till den, SQLite kan göra tusentals cursor executions per sekund, men få commits, dont abuse commits om det inte är nödvändigt.)
+
 ### Butikslogin
 
 Hantera butiksinloggning för medlemspriser.
+
+### Clean commits
+
+Commits kostar tydligen prestanda och låser databsen...istället för att commita efter varje manipulation så kan man commita när man stänger databasen, men riskerar att förlora ocommitad data om programmet kraschar.
+
+Men t.ex. update_all kanske inte behöver en commit efter varje insert, commita efter hela loopen är körd.
+
+### Cursor-problemet
+
+För att kunna hantera fel måste jag kolla värdet i cursorn, men kollar jag värdet så flyttar jag "pointern".
+
+Lösningen är att jag läser in allt i minne med .fetchone/all/many. och skickar det till define_product istället för ett cursor-object, men då måste jag skriva om define_product IGEN, och gå tillbaka till att läsa in allt i minnet.
+
+Jag vet inte vad som är mest tidseffektivt, men jag skulle i get_product_data köra queryn, kolla om den kom tillbaka tom och om den inte gjorde det så kör jag samma query igen för att få en ny pointer.
+
+### SQLite timedate
+
+SQLite kan hantera timedate själv på något sätt, då kan den hålla reda på när tabeller blir uppdaterade själv.

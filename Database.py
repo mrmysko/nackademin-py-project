@@ -4,18 +4,17 @@ from Product import Product
 
 
 class Database:
-    """Creates an SQLite-database object"""
+    """creates an SQLite-database object"""
 
     def __init__(self, file):
         self.file = file
 
-        # Open a connection to the database.
         self.connection = sqlite3.connect(self.file)
 
-        # Open a cursor to the database.
         self.cursor = self.connection.cursor()
 
-        # Create table if it doesnt exist. - This is supposed to get time data from python, but SQLite supports its own datetime.
+        # Create table if it doesnt exist.
+        # This is supposed to get time data from python, but SQLite supports its own datetime. Find out how.
         self.cursor.execute(
             """CREATE TABLE IF NOT EXISTS products( 
                     id INTEGER PRIMARY KEY, 
@@ -28,7 +27,6 @@ class Database:
                     ) STRICT"""
         )
 
-        # Commit the command to db.
         self.connection.commit()
 
         # Get columns in db
@@ -36,11 +34,28 @@ class Database:
         self.columns = [col[0] for col in self.cursor.description]
 
     def get_product_data(self, id) -> Product:
-        """returns a single row of "id" product data."""
+        """returns a product object of ids database data.
+
+        Will instead return False if the id was not found."""
 
         data = self.cursor.execute("SELECT * FROM products WHERE id = ?", (id,))
 
-        return self.define_products(data)[0]
+        # Problemet här är att efter if not list(data) har kollat om listan är tom så
+        # discardar cursor-objectet den raden.
+        # Flowet här går typ:
+        #       Skaffa cursor-object ->
+        #       Kolla om det är tomt. ->
+        #       Om det inte är det, skicka det till define_products. ->
+        #       Men om det bara va en rad i objectet så är cursorn tom nu.
+
+        if not list(data):
+            return False
+
+        else:
+            # Need to rerun the query to get a "non-discarded" cursor-object.
+            data = self.cursor.execute("SELECT * FROM products WHERE id = ?", (id,))
+
+            return self.define_products(data)[0]
 
     def insert_product_data(self, product: Product) -> int:
         """inserts data into the database."""
@@ -65,7 +80,9 @@ class Database:
         """removes items from the database."""
 
         self.cursor.execute("DELETE FROM products WHERE id = ?", (product.id,))
-        self.connection.commit()
+
+        # Not commiting remove until user closes program.
+        # self.connection.commit()
         return self.cursor.rowcount
 
     def dump_db(self) -> list:
@@ -108,5 +125,6 @@ class Database:
     def close_db(self):
         """closes the database connection."""
 
+        self.connection.commit()
         self.cursor.close()
         self.connection.close()

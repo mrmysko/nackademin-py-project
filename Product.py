@@ -18,8 +18,12 @@ class Product:
         return self.name
 
     def update(self):
-        # This should probably be changed to just update if anything is changed.
-        self.name, self.price, self.last_updated = ExtractData(self.url)
+        try:
+            self.name, self.price, self.last_updated = ExtractData(self.url)
+
+        # If there's an error here, just raise it to the function that called this.
+        except:
+            raise
 
         if not hasattr(self, "lowest_price"):
             self.lowest_price = self.price
