@@ -224,7 +224,7 @@ def check_update(product: Product) -> tuple:
         return (0, product)
 
     # If the updated price is lower than current, return 2 to mail.
-    elif updated_product.price > product.price:
+    if updated_product.price < product.price:
         product.price = updated_product.price
         product.last_updated = updated_product.last_updated
 
@@ -235,8 +235,9 @@ def check_update(product: Product) -> tuple:
 
         return (2, product)
 
-    else:
-        return (1, product)
+    product.price = updated_product.price
+    product.last_updated = updated_product.last_updated
+    return (1, product)
 
 
 def main():
