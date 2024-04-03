@@ -18,14 +18,16 @@ Just nu mailar jag om priset är lägre än det lägsta, men jag borde maila om 
 
 En progressbar för uppdate_all.
 
-### Fel-hantering
+### Felhantering
 
 Hantera fel på ett bättre sätt...nu är det i princip tre try except som håller på och bubblar upp ett exception som fångas i main för om en användare skriver in en felaktig länk.
+
+Major issue - hela update_all threadpoolen ligger i en try nu. Så allt i den kommer fallera om en tråd raisar ett exception. Problemet är om jag hanterar felet så att det inte raisas något i check_update så måste jag hantera det värdet i threadpool mapen i update_all, och i update()
 
 - Om databasen inte är tillgänglig.
   - Vad ska hända? = Raise nått fel och stäng programmet. Hur kan jag differentiera från olika sätt den är unavailable på? Locked/Permissions/Corrupt etc.
 
-- Om update_all inte kommer åt urlen.
+- Om ett databas-värde inte finns längre (En produkt kanske bytt namn, url eller blivit borttaget)
 
 ### Verbosity
 
@@ -65,7 +67,7 @@ GUI för alla funktioner.
 
 ### Fler butiker
 
-Amazon, Inet, Webhallen, Komplett etc...speciellt Amazon eftersom deras sida är oöverskådlig och dom byter priser när som helst baserat på vad som helst.
+Amazon, Inet, Webhallen, Komplett etc...speciellt Amazon eftersom deras sida är oöverskådlig och byter priser när som helst baserat på vad som helst.
 
 ### Samma modell i olika färg
 
@@ -108,6 +110,18 @@ Lösningen är att jag läser in allt i minne med .fetchone/all/many. och skicka
 
 Jag vet inte vad som är mest tidseffektivt, men jag skulle i get_product_data köra queryn, kolla om den kom tillbaka tom och om den inte gjorde det så kör jag samma query igen för att få en ny pointer.
 
+### Ändra DB
+
+Tillåt ett argument för att skicka in en annan db.
+
 ### SQLite timedate
 
 SQLite kan hantera timedate själv på något sätt, då kan den hålla reda på när tabeller blir uppdaterade själv.
+
+### Daemon-halvmesyr
+
+Daemon är något av en halvmesyr, om man schemalägger den så öppnas en ny instans varje gång som ligger i bakgrunden. Ta bort loopen och låt -d köra update_all EN gång.
+
+### Refactor dump
+
+Behöver jag dumpa databasen varje gång jag vill printa den eller göra något med den? Är det bättre att läsa in den i minne och spara den, och sen commita den till databasen när programmet är färdigt?

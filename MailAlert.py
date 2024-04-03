@@ -13,8 +13,7 @@ def mail_alert(products: list):
     sender = "robin.kavenius@live.se"  # This is an alias to my stmp.login mail.
     recipient = "robin.kavenius@live.se"
 
-    # In the final version, dont do dump_db here, just add a list of products actually updated.
-    message = format_message(products)
+    message = format_message(products, alt_format=True)
 
     # Create a mail object.
     email = EmailMessage()
@@ -28,7 +27,7 @@ def mail_alert(products: list):
     smtp.starttls()
 
     # Using my personal outlook mail.
-    smtp.login("orkar_-.-@hotmail.com", "pass")  # Password redacted
+    smtp.login("orkar_-.-@hotmail.com", "wpatjsofqlprnwml")  # Password redacted
     smtp.sendmail(sender, recipient, email.as_string())
     smtp.quit()
 

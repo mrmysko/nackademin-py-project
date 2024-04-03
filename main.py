@@ -11,6 +11,14 @@ from FormatMessage import format_message
 from MailAlert import mail_alert
 
 
+# Dont make a static db. Allow to change?
+# Opens price.db placed in programs root folder.
+# DB_PATH = Path(__file__).with_name("price.db")
+DB_PATH = Path(__file__).with_name("edited.db")  # Test-db
+
+DB = Database(DB_PATH)
+
+
 def clear_console():
     """clears the console on both windows and unix systems."""
     command = "clear"
@@ -23,7 +31,7 @@ def clear_console():
     print("|--------------|")
 
 
-def remove_menu(db: Database):
+def remove_menu():
     """user-facing menu for removing items from database."""
 
     while True:
@@ -44,7 +52,7 @@ def remove_menu(db: Database):
         try:
             int(user_choice)
 
-            product = db.get_product_data(user_choice)
+            product = DB.get_product_data(user_choice)
 
             if not product:
                 input("Index not found.")
@@ -56,7 +64,7 @@ def remove_menu(db: Database):
             user_confirm = input(": ")
             match user_confirm.lower():
                 case "y":
-                    if db.remove_product_data(product):
+                    if DB.remove_product_data(product):
                         input(f"{product.name} removed.")
                 case _:
                     pass
@@ -64,7 +72,7 @@ def remove_menu(db: Database):
         except ValueError:
             match user_choice:
                 case "p":
-                    print(format_message(db.dump_db()))
+                    print(format_message(DB.dump()))
                     input()
                 case "b":
                     break
@@ -72,7 +80,7 @@ def remove_menu(db: Database):
                     pass
 
 
-def update_menu(db: Database):
+def update_menu():
     """user-facing menu for updating database items."""
 
     while True:
@@ -87,7 +95,7 @@ def update_menu(db: Database):
         try:
             int(user_choice)
 
-            product = db.get_product_data(user_choice)
+            product = DB.get_product_data(user_choice)
 
             if not product:
                 input("Index not found.")
@@ -101,7 +109,7 @@ def update_menu(db: Database):
 
             # Status 2 in a manual update doesnt require a mail.
             if status == 1 or status == 2:
-                if db.insert_product_data(product):
+                if DB.insert_product_data(product):
                     input(f"{product.name} updated.")
                     continue
                 else:
@@ -113,7 +121,7 @@ def update_menu(db: Database):
         except ValueError:
             match user_choice:
                 case "p":
-                    print(format_message(db.dump_db()))
+                    print(format_message(DB.dump()))
                     input()
                 case "b":
                     break
@@ -121,7 +129,7 @@ def update_menu(db: Database):
                     pass
 
 
-def add_menu(db: Database):
+def add_menu():
     """user-facing menu for adding items to database."""
 
     clear_console()
@@ -132,7 +140,7 @@ def add_menu(db: Database):
         product = Product(("url", url))
 
         # Check if product is in database, else add it.
-        if not db.insert_product_data(product):
+        if not DB.insert_product_data(product):
             input(f"Could not add {product.name} to database.")
         else:
             input(f"Added {product.name} to database.")
@@ -144,7 +152,7 @@ def add_menu(db: Database):
         input("Site unreachable.")
 
 
-def search_menu(db: Database):
+def search_menu():
     """search database for a search_term"""
 
     while True:
@@ -157,12 +165,12 @@ def search_menu(db: Database):
 
         match search_term:
             case "p":
-                print(format_message(db.dump_db()))
+                print(format_message(DB.dump()))
                 input()
             case "b":
                 break
             case _:
-                result = db.search_db(search_term)
+                result = DB.search_db(search_term)
                 if result:
                     print(format_message(result))
                     input()
@@ -174,28 +182,32 @@ def update_all() -> int:
     """updates all items in the database"""
 
     mail_products = list()
-    products_updated = 0
+    number_updated = 0
 
-    products = db.dump_db()
+    products = DB.dump()
 
-    # Creates a threadpool with 8 threads.
-    with ThreadPoolExecutor(max_workers=8) as executor:
-        # Executes the test_update function on every product parallel, saves result to a map in updated_products
-        updated_products = executor.map(check_update, products)
+    try:
+        # Creates a threadpool with 8 threads.
+        with ThreadPoolExecutor(max_workers=12) as executor:
+            # Executes the test_update function on every product parallel, saves result to a map in updated_products
+            updated_products = executor.map(check_update, products)
 
-    # Commits updated_products to database
-    for state, product in updated_products:
-        # Right now this will always increment because last_updated will always change.
-        if state >= 1:
-            products_updated += db.insert_product_data(product)
-            if state == 2:
-                mail_products.append(product)
+        # Commits updated_products to database
+        for state, product in updated_products:
+            # Right now this will always increment because last_updated will always change.
+            if state >= 1:
+                number_updated += DB.insert_product_data(product)
+                if state == 2:
+                    mail_products.append(product)
 
-    # Send mail if list is not empty.
-    if mail_products:
-        mail_alert(mail_products)
+        # Send mail if list is not empty.
+        if mail_products:
+            mail_alert(mail_products)
 
-    return products_updated
+        return number_updated
+
+    except requests.exceptions.ConnectionError:
+        print("Site unreachable.")
 
 
 def check_update(product: Product) -> tuple:
@@ -228,7 +240,7 @@ def check_update(product: Product) -> tuple:
         return (1, product)
 
 
-def main(db: Database):
+def main():
     menu_items = {
         "1": "Search DB",
         "2": "Add item",
@@ -249,26 +261,26 @@ def main(db: Database):
 
         match user_choice:
             case "1":
-                search_menu(db)
+                search_menu()
 
             case "2":
-                add_menu(db)
+                add_menu()
 
             case "3":
-                remove_menu(db)
+                remove_menu()
 
             case "4":
-                update_menu(db)
+                update_menu()
 
             case "5":
                 input(f"{update_all()} product(s) updated.")
 
             case "p":
-                print(format_message(db.dump_db()))
+                print(format_message(DB.dump()))
                 input()
 
             case "e":
-                db.close_db()
+                DB.close()
                 break
 
             case _:
@@ -280,28 +292,22 @@ if __name__ == "__main__":
     parser.add_argument("-d", "--daemon", help="update database", action="store_true")
     args = parser.parse_args()
 
-    # Dont make a static db. Allow to change?
-    # Opens price.db placed in programs root folder.
-    db_path = Path(__file__).with_name("price.db")
-
-    db = Database(db_path)
-
     if args.daemon:
-        print("Running update_all every 3 minutes.")
+        print("Running update_all every 5 minutes.")
         # Not adding as a background task, it would be tedious to try to kill it if its not user facing.
         # Run as a task or cronjob to update continuously instead.
         while True:
-            time.sleep(180)
+            time.sleep(300)
 
             # Open db connection. - This is legal?
-            db.__init__(db.file)
+            DB.__init__(DB.file)
 
             print(
                 f"{time.strftime('%H:%M', time.localtime())} | {update_all()} product(s) updated."
             )
 
             # Close db so someone can edit it while not updating.
-            db.close_db()
+            DB.close()
 
     else:
-        main(db)
+        main()

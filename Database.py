@@ -47,6 +47,7 @@ class Database:
         #       Kolla om det är tomt. ->
         #       Om det inte är det, skicka det till define_products. ->
         #       Men om det bara va en rad i objectet så är cursorn tom nu.
+        # Alternativt att använda .fetchall()/one() för att stoppa resultatet i minnet och skriva om define_products.
 
         if not list(data):
             return False
@@ -85,7 +86,7 @@ class Database:
         # self.connection.commit()
         return self.cursor.rowcount
 
-    def dump_db(self) -> list:
+    def dump(self) -> list:
         """returns a list of product class-objects."""
 
         # Get all rows from database.
@@ -122,7 +123,7 @@ class Database:
         # This is a list of class-objects.
         return products
 
-    def close_db(self):
+    def close(self):
         """closes the database connection."""
 
         self.connection.commit()

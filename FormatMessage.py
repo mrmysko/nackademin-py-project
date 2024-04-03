@@ -1,15 +1,14 @@
 import os
 
 
-def format_message(products: list):
-    """prints the content of a database formatted."""
+def format_message(products: list, alt_format=False) -> str:
+    """returns the content of a list of products as a formatted string."""
 
     if not products:
         print("Database empty.")
         return
 
-    message = []
-    alt_format = False
+    message = list()
     longest_name = 0
 
     for product in products:
