@@ -60,7 +60,7 @@ def format_message(products: list, alt_format=False) -> str:
 
 
 def format_price(price: int) -> str:
-    """formats price to a human readable form."""
+    """formats price to a prettier form."""
 
     price = f"{int(price):,} :-".replace(",", " ")
 

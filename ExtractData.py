@@ -16,12 +16,12 @@ def ExtractData(url: str) -> tuple:
 
     try:
         # Requested url to get, with headers as argument. Returns a request-object.
-        site_content = requests.get(url, headers=headers)
+        site = requests.get(url, headers=headers)
     except requests.exceptions.ConnectionError:
         raise
 
     # Instantiates a bs-object with request-content and lxml as parser.
-    soup = BeautifulSoup(site_content.content, "lxml")
+    soup = BeautifulSoup(site.content, "lxml")
 
     try:
         # Extracts name and price.

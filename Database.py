@@ -94,7 +94,7 @@ class Database:
 
         return self.define_products(all_rows)
 
-    def search_db(self, search_term) -> list:
+    def search(self, search_term) -> list:
         """search name column for strings matching search_term"""
 
         matching_rows = self.cursor.execute(

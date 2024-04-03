@@ -27,7 +27,7 @@ def mail_alert(products: list):
     smtp.starttls()
 
     # Using my personal outlook mail.
-    smtp.login("orkar_-.-@hotmail.com", "wpatjsofqlprnwml")  # Password redacted
+    smtp.login("orkar_-.-@hotmail.com", "yhwsscbdakztbrpw")  # Password redacted
     smtp.sendmail(sender, recipient, email.as_string())
     smtp.quit()
 

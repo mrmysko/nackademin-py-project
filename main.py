@@ -31,7 +31,7 @@ def clear_console():
     print("|--------------|")
 
 
-def remove_menu():
+def menu_remove():
     """user-facing menu for removing items from database."""
 
     while True:
@@ -72,15 +72,14 @@ def remove_menu():
         except ValueError:
             match user_choice:
                 case "p":
-                    print(format_message(DB.dump()))
-                    input()
+                    input(format_message(DB.dump()))
                 case "b":
                     break
                 case _:
                     pass
 
 
-def update_menu():
+def menu_update():
     """user-facing menu for updating database items."""
 
     while True:
@@ -115,21 +114,19 @@ def update_menu():
                 else:
                     input("Could not update database.")
                     continue
-            print(f"{product.name} already up to date.")
-            input()
+            input(f"{product.name} already up to date.")
 
         except ValueError:
             match user_choice:
                 case "p":
-                    print(format_message(DB.dump()))
-                    input()
+                    input(format_message(DB.dump()))
                 case "b":
                     break
                 case _:
                     pass
 
 
-def add_menu():
+def menu_add():
     """user-facing menu for adding items to database."""
 
     clear_console()
@@ -141,18 +138,20 @@ def add_menu():
 
         # Check if product is in database, else add it.
         if not DB.insert_product_data(product):
-            input(f"Could not add {product.name} to database.")
+            message = f"Could not add {product.name} to database."
         else:
-            input(f"Added {product.name} to database.")
+            message = f"Added {product.name} to database."
 
     except AttributeError:
-        input("Data not found.")
+        message = "Data not found."
     # Do I really need to import requests just to catch a raised error?
     except requests.exceptions.ConnectionError:
-        input("Site unreachable.")
+        message = "Site unreachable."
+
+    input(message)
 
 
-def search_menu():
+def menu_search():
     """search database for a search_term"""
 
     while True:
@@ -165,15 +164,13 @@ def search_menu():
 
         match search_term:
             case "p":
-                print(format_message(DB.dump()))
-                input()
+                input(format_message(DB.dump()))
             case "b":
                 break
             case _:
-                result = DB.search_db(search_term)
+                result = DB.search(search_term)
                 if result:
-                    print(format_message(result))
-                    input()
+                    input(format_message(result))
                     continue
                 input("No matches.")
 
@@ -190,7 +187,7 @@ def update_all() -> int:
         # Creates a threadpool with 8 threads.
         with ThreadPoolExecutor(max_workers=12) as executor:
             # Executes the test_update function on every product parallel, saves result to a map in updated_products
-            updated_products = executor.map(check_update, products)
+            updated_products = executor.map(check_update, products, timeout=20)
 
         # Commits updated_products to database
         for state, product in updated_products:
@@ -226,8 +223,8 @@ def check_update(product: Product) -> tuple:
     if updated_product.price == product.price:
         return (0, product)
 
-    # Else set the price of the product to the price of the updated product.
-    else:
+    # If the updated price is lower than current, return 2 to mail.
+    elif updated_product.price > product.price:
         product.price = updated_product.price
         product.last_updated = updated_product.last_updated
 
@@ -235,8 +232,10 @@ def check_update(product: Product) -> tuple:
         if product.price < product.lowest_price:
             product.lowest_price = product.price
             product.lowest_price_date = product.last_updated
-            return (2, product)
 
+        return (2, product)
+
+    else:
         return (1, product)
 
 
@@ -254,30 +253,31 @@ def main():
     while True:
         clear_console()
 
-        for key, item in menu_items.items():
-            print(f"{key}. {item}.")
+        for index, (key, item) in enumerate(menu_items.items()):
+            print(f"{key}. {item.ljust(12)}", end="")
+            if index % 2 == 0:
+                print()
 
         user_choice = input(": ")
 
         match user_choice:
             case "1":
-                search_menu()
+                menu_search()
 
             case "2":
-                add_menu()
+                menu_add()
 
             case "3":
-                remove_menu()
+                menu_remove()
 
             case "4":
-                update_menu()
+                menu_update()
 
             case "5":
                 input(f"{update_all()} product(s) updated.")
 
             case "p":
-                print(format_message(DB.dump()))
-                input()
+                input(format_message(DB.dump()))
 
             case "e":
                 DB.close()
