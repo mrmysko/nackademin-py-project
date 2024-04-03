@@ -1,4 +1,3 @@
-# Sets the headers for use with beatifulsoup, server does not allow requests without a normal header?
 import re
 import requests
 
@@ -17,7 +16,8 @@ def ExtractData(url: str) -> tuple:
     try:
         # Requested url to get, with headers as argument. Returns a request-object.
         site = requests.get(url, headers=headers)
-    except requests.exceptions.ConnectionError:
+        site.raise_for_status()
+    except requests.exceptions.RequestException:
         raise
 
     # Instantiates a bs-object with request-content and lxml as parser.
