@@ -107,15 +107,8 @@ class Database:
     def define_products(self, cursor_obj) -> list:
         """creates product objects from rows in a given cursor object"""
 
-        # List to store zip objects with col, value tuples.
-        tupled_values = list()
-
-        # Creates a list of zip objects consisting of col, value pairs.
-        """printing tupled_values gives [zip-object, zip-object, zip-object...]
-        And printing tupled_values[0] gives [("id", 1), ("name", "something"), ("price", "100")] etc
-        So each list element in tuple_rows contains a list of all zipped values."""
-        for row in cursor_obj:
-            tupled_values.append(zip(self.columns, row))
+        # Zips together db.columns and rows into a list of zip objects.
+        tupled_values = [zip(self.columns, values) for values in cursor_obj]
 
         # Creates product objects for every zipped value, the star in the argument unpacks zip and passes tuples as arguments.
         products = [Product(*row) for row in tupled_values]
