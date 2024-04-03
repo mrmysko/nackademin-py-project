@@ -26,9 +26,18 @@ def clear_console():
         command = "cls"
     os.system(command)
 
+
+def menu_print(menu_items={"p": "Print DB.", "b": "Go back."}):
+    """prints the menu"""
+
     print("|--------------|")
     print("| Price-thingy | - Netonnet edition")
     print("|--------------|")
+
+    for index, (key, item) in enumerate(menu_items.items()):
+        print(f"{key}. {item.ljust(12)}", end="")
+        if index % 2 == 0:
+            print()
 
 
 def menu_remove():
@@ -36,10 +45,8 @@ def menu_remove():
 
     while True:
         clear_console()
+        menu_print()
 
-        print("Which item would you like to remove?")
-        print("p. Print DB.")
-        print("b. Go back.")
         user_choice = input("ID: ")
 
         # How do I check against both str and int input?
@@ -84,10 +91,8 @@ def menu_update():
 
     while True:
         clear_console()
+        menu_print()
 
-        print("Which item would you like to update?")
-        print("p. Print DB.")
-        print("b. Go back.")
         user_choice = input("ID: ")
 
         # Hey, thats illegal.
@@ -102,7 +107,7 @@ def menu_update():
 
             try:
                 status, product = check_update(product)
-            except requests.exceptions.ConnectionError:
+            except requests.exceptions.RequestException:
                 input("Site unreachable.")
                 continue
 
@@ -129,26 +134,34 @@ def menu_update():
 def menu_add():
     """user-facing menu for adding items to database."""
 
-    clear_console()
+    while True:
+        clear_console()
+        menu_print()
 
-    url = input("URL: ")
+        url = input("URL: ")
 
-    try:
-        product = Product(("url", url))
+        match url:
+            case "p":
+                input(format_message(DB.dump()))
+            case "b":
+                break
+            case _:
+                try:
+                    product = Product(("url", url))
 
-        # Check if product is in database, else add it.
-        if not DB.insert_product_data(product):
-            message = f"Could not add {product.name} to database."
-        else:
-            message = f"Added {product.name} to database."
+                    # Check if product is in database, else add it.
+                    if not DB.insert_product_data(product):
+                        message = f"Could not add {product.name} to database."
+                    else:
+                        message = f"Added {product.name} to database."
 
-    except AttributeError:
-        message = "Data not found."
-    # Do I really need to import requests just to catch a raised error?
-    except requests.exceptions.ConnectionError:
-        message = "Site unreachable."
+                except AttributeError:
+                    message = "Data not found."
+                # Do I really need to import requests just to catch a raised error?
+                except requests.exceptions.RequestException:
+                    message = "Site unreachable."
 
-    input(message)
+                input(message)
 
 
 def menu_search():
@@ -156,9 +169,7 @@ def menu_search():
 
     while True:
         clear_console()
-
-        print("p. Print db.")
-        print("b. Go back.")
+        menu_print()
 
         search_term = input("Search: ")
 
@@ -203,7 +214,7 @@ def update_all() -> int:
 
         return number_updated
 
-    except requests.exceptions.ConnectionError:
+    except requests.exceptions.RequestException:
         print("Site unreachable.")
 
 
@@ -216,7 +227,7 @@ def check_update(product: Product) -> tuple:
     try:
         # Creates a new product-object from the supplied products url.
         updated_product = Product(("url", product.url))
-    except requests.exceptions.ConnectionError:
+    except requests.exceptions.RequestException:
         raise
 
     # If the price of the updated product is the same as the database value. Return False. Mothing has updated.
@@ -254,36 +265,26 @@ def main():
     while True:
         clear_console()
 
-        for index, (key, item) in enumerate(menu_items.items()):
-            print(f"{key}. {item.ljust(12)}", end="")
-            if index % 2 == 0:
-                print()
+        menu_print(menu_items)
 
         user_choice = input(": ")
 
         match user_choice:
             case "1":
                 menu_search()
-
             case "2":
                 menu_add()
-
             case "3":
                 menu_remove()
-
             case "4":
                 menu_update()
-
             case "5":
                 input(f"{update_all()} product(s) updated.")
-
             case "p":
                 input(format_message(DB.dump()))
-
             case "e":
                 DB.close()
                 break
-
             case _:
                 pass
 

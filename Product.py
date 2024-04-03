@@ -2,9 +2,11 @@ from ExtractData import ExtractData
 
 
 class Product:
-    """creates a product-object"""
+    """creates a product object"""
 
     def __init__(self, *args):
+        """initialize a product object."""
+
         # Unpacks and dynamically assigns variables.
         for attr, value in args:
             setattr(self, attr, value)

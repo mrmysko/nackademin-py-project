@@ -41,9 +41,3 @@ def ExtractData(url: str) -> tuple:
     last_updated = datetime.now().isoformat()
 
     return (name, price, last_updated)
-
-
-# Old
-
-# Remove art nr from name.
-# name = re.sub(" Art.nr:.*$", "", name).strip()

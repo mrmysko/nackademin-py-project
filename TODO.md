@@ -6,9 +6,7 @@ Gör om, gör rätt.
 
 ### Fixa mail-alert
 
-Jag mailar om användaren manuellt kör en update all i CLI, onödigt.
-
-Just nu mailar jag om priset är lägre än det lägsta, men jag borde maila om priset är lägre än nuvarnade, oavsett vad det lägsta var...Typ "product price now x, was y, lowest ever z"
+Jag maila inte om användaren manuellt kör en update i CLI.
 
 ### Få ut mer data/kategorier från produkter
 
@@ -61,6 +59,8 @@ En url kan lägga på massa en massa grejer som inte behövs för att komma åt 
 
 Mer statistik så som hur länge priset legat, tids-graf, olika priser i olika butiker vid olika tidpunkter etc.
 
+Att ens visa ett timestamp vore en improvement tbh.
+
 ### GUI
 
 GUI för alla funktioner.
@@ -86,19 +86,13 @@ Genereras med javascript, så priset renderas på annat sätt. requests kör int
 
 Få ut art nr från url elr html, leta efter pris med bs4 typ find("h2", {"name": "1026559-price"}.get_text(strip=True))
 
-### Stäng databasen
-
-Databasen står öppen när programmet körs, även om den inte används till något. Stäng den efter varje operation, eller använd "with" för att göra det automatiskt.
-
-(Det spelar ingen roll om connectionen till databsen är öppen, vad som spelar roll är att någon inte försöker göra något samtidigt som data commitas till den, SQLite kan göra tusentals cursor executions per sekund, men få commits, dont abuse commits om det inte är nödvändigt.)
-
 ### Butikslogin
 
 Hantera butiksinloggning för medlemspriser.
 
 ### Clean commits
 
-Commits kostar tydligen prestanda och låser databsen...istället för att commita efter varje manipulation så kan man commita när man stänger databasen, men riskerar att förlora ocommitad data om programmet kraschar.
+Commits kostar tydligen prestanda och låser databsen...istället för att commita efter varje ändring så kan man commita när man stänger databasen, men riskerar att förlora ocommitad data om programmet kraschar.
 
 Men t.ex. update_all kanske inte behöver en commit efter varje insert, commita efter hela loopen är körd.
 
@@ -108,7 +102,7 @@ För att kunna hantera fel måste jag kolla värdet i cursorn, men kollar jag v�
 
 Lösningen är att jag läser in allt i minne med .fetchone/all/many. och skickar det till define_product istället för ett cursor-object, men då måste jag skriva om define_product IGEN, och gå tillbaka till att läsa in allt i minnet.
 
-Jag vet inte vad som är mest tidseffektivt, men jag skulle i get_product_data köra queryn, kolla om den kom tillbaka tom och om den inte gjorde det så kör jag samma query igen för att få en ny pointer.
+Jag vet inte vad som är mest tidseffektivt, men jag skulle i get_product_data kunna köra queryn, kolla om den kom tillbaka tom och om den inte gjorde det så kör jag samma query igen för att få en ny pointer.
 
 ### Ändra DB
 
