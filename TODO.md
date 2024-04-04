@@ -20,11 +20,13 @@ En progressbar för uppdate_all.
 
 Idea som inte panned out.
 
+### Göm credentials
+
+Mail-credentials ligger i klartext i mailalert filen...stoppa i en credentials fil eller nått och hasha.
+
 ### Felhantering
 
 Hantera fel på ett bättre sätt...nu är det i princip tre try except som bubblar upp ett exception som fångas i main för om en användare skriver in en felaktig länk.
-
-Major issue - hela update_all threadpoolen ligger i en try nu. Så allt i den kommer fallera om en tråd raisar ett exception. Problemet är om jag hanterar felet så att det inte raisas något i check_update så måste jag hantera det värdet i threadpool mapen i update_all, och i update()
 
 - Om databasen inte är tillgänglig.
   - Vad ska hända? = Raise nått fel och stäng programmet. Hur kan jag differentiera från olika sätt den är unavailable på? Locked/Permissions/Corrupt etc.

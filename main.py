@@ -60,7 +60,7 @@ def menu_search():
                 if result:
                     input(format_message(result))
                     continue
-                input("No matches.")
+                input("No matches found.")
 
 
 def menu_add():
@@ -83,9 +83,9 @@ def menu_add():
 
                     # Check if product is in database, else add it.
                     if not DB.insert_product_data(product):
-                        message = f"Could not add {product.name} to database."
+                        message = f"Could not add '{product.name}' to database."
                     else:
-                        message = f"Added {product.name} to database."
+                        message = f"Added '{product.name}' to database."
 
                 except AttributeError:
                     message = "Data not found."
@@ -121,14 +121,14 @@ def menu_remove():
                 input("Index not found.")
                 continue
 
-            print(f"Confirm removal of: {product.name}")
+            print(f"Confirm removal of '{product.name}'")
             print("(y/n)")
 
             user_confirm = input(": ")
             match user_confirm.lower():
                 case "y":
                     if DB.remove_product_data(product):
-                        input(f"{product.name} removed.")
+                        input(f"'{product.name}' removed.")
                 case _:
                     pass
 
@@ -164,17 +164,20 @@ def menu_update():
             try:
                 status, product = check_update(product)
             except requests.exceptions.RequestException:
-                input("Site unreachable.")
+                input(f"Unreachable: {product.url}")
+                continue
+            except AttributeError:
+                input(f"Data of '{product.name}' not found in URL.")
                 continue
 
             if status:
                 if DB.insert_product_data(product):
-                    input(f"{product.name} updated.")
+                    input(f"'{product.name}' updated.")
                     continue
                 else:
                     input("Could not update database.")
                     continue
-            input(f"{product.name} already up to date.")
+            input(f"'{product.name}' already up to date.")
 
         except ValueError:
             match user_choice:
@@ -194,28 +197,36 @@ def update_all() -> int:
 
     products = DB.dump()
 
-    try:
-        # Creates a threadpool with 8 threads.
-        with ThreadPoolExecutor(max_workers=12) as executor:
-            # Executes the test_update function on every product parallel, saves result to a map in updated_products
-            updated_products = executor.map(check_update, products, timeout=20)
+    def handle_check_update_error(product: Product):
+        """handles errors in called funvtions so the entire threadpool doesnt fail."""
 
-        # Commits updated_products to database
-        for state, product in updated_products:
-            # Right now this will always increment because last_updated will always change.
-            if state >= 1:
-                number_updated += DB.insert_product_data(product)
-                if state == 2:
-                    mail_products.append(product)
+        try:
+            return check_update(product)
+        except requests.exceptions.RequestException:
+            print(f"Unreachable: {product.url}")
+            return (0, product)
+        except AttributeError:
+            print(f"Data of '{product.name}' not found in URL.")
+            return (0, product)
 
-        # Send mail if list is not empty.
-        if mail_products:
-            mail_alert(mail_products)
+    # Creates a threadpool with 8 threads.
+    with ThreadPoolExecutor(max_workers=12) as executor:
+        # Executes the test_update function on every product parallel, saves result to a map in updated_products
+        updated_products = executor.map(handle_check_update_error, products, timeout=20)
 
-        return number_updated
+    # Commits updated_products to database
+    for state, product in updated_products:
+        # Right now this will always increment because last_updated will always change.
+        if state >= 1:
+            number_updated += DB.insert_product_data(product)
+            if state == 2:
+                mail_products.append(product)
 
-    except requests.exceptions.RequestException:
-        print("Site unreachable.")
+    # Send mail if list is not empty.
+    if mail_products:
+        mail_alert(mail_products)
+
+    return number_updated
 
 
 def check_update(product: Product) -> tuple:
@@ -228,6 +239,8 @@ def check_update(product: Product) -> tuple:
         # Creates a new product-object from the supplied products url.
         updated_product = Product(*get_url_data(product.url))
     except requests.exceptions.RequestException:
+        raise
+    except AttributeError:
         raise
 
     # If the price of the updated product is the same as the database value. Return False. Mothing has updated.

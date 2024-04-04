@@ -22,13 +22,17 @@ def mail_alert(products: list):
     email["Subject"] = "Price-thingy updates."  # Add a timestamp here.
     email.set_content(message)
 
-    # Establish mail-server connection.
-    smtp = smtplib.SMTP("smtp-mail.outlook.com", port=587)
-    smtp.starttls()
+    try:
+        # Establish mail-server connection.
+        smtp = smtplib.SMTP("smtp-mail.outlook.com", port=587)
+        smtp.starttls()
+        smtp.login("orkar_-.-@hotmail.com", "yhwsscbdakztbrpw")  # Password redacted
+        smtp.sendmail(sender, recipient, email.as_string())
+    except smtplib.SMTPAuthenticationError:
+        print("Mail error: Invalid credentials.")
+    except smtplib.SMTPException:
+        print("Mail error.")
 
-    # Using my personal outlook mail.
-    smtp.login("orkar_-.-@hotmail.com", "yhwsscbdakztbrpw")  # Password redacted
-    smtp.sendmail(sender, recipient, email.as_string())
     smtp.quit()
 
 
