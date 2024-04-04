@@ -12,14 +12,6 @@ Jag maila inte om användaren manuellt kör en update i CLI.
 
 <https://www.netonnet.se/art/dator-surfplatta/laptop/laptop-14-16-tum/angstrom-angstrom-m1home/1028915.8908/> t.ex. Kommer ut som "Ångström (M1HOME)", vilket inte säger någonting. (Det är en laptop btw.) t.ex. kan man få ut kategorier från breadcrumben.
 
-### Update progressbar
-
-En progressbar för uppdate_all.
-
-### Flytta update från produkt-klassen
-
-Idea som inte panned out.
-
 ### Göm credentials
 
 Mail-credentials ligger i klartext i mailalert filen...stoppa i en credentials fil eller nått och hasha.
@@ -33,15 +25,13 @@ Hantera fel på ett bättre sätt...nu är det i princip tre try except som bubb
 
 - Om ett databas-värde inte finns längre (En produkt kanske bytt namn, url eller blivit borttaget)
 
-- Om mail alert misslyckas. - Lägg till typ "Unable to mail" efter x products updated.
-
 ### Verbosity
 
 Options/Argparse flagga för att öka output till konsolen.
 
 ### Options table
 
-Ha options i uit och spara dom i databasen. t.ex. sorting/display options, update interval.
+Ha options i uit och spara dom i databasen. t.ex. sorting/display options, update interval, databasfil, mail-recipients.
 
 ### Ökad formatering på databas-prints
 
@@ -81,6 +71,10 @@ Amazon, Inet, Webhallen, Komplett etc...speciellt Amazon eftersom deras sida är
 
 En produkt kan ofta ha olika priser i olika färger.
 
+### Update progressbar
+
+En progressbar för uppdate_all.
+
 ### Hämta produkter från olika butiker
 
 Med urlen från en butik kunna hämta samma produkt från flera butiker.
@@ -94,6 +88,9 @@ Genereras med javascript, så priset renderas på annat sätt. requests kör int
 
 Få ut art nr från url elr html, leta efter pris med bs4 typ find("h2", {"name": "1026559-price"}.get_text(strip=True))
 
+Prova dryscrape elr qt4
+<https://pythonprogramming.net/javascript-dynamic-scraping-parsing-beautiful-soup-tutorial/>
+
 ### Butikslogin
 
 Hantera butiksinloggning för medlemspriser.
@@ -103,6 +100,8 @@ Hantera butiksinloggning för medlemspriser.
 Commits kostar tydligen prestanda och låser databsen...istället för att commita efter varje ändring så kan man commita när man stänger databasen, men riskerar att förlora ocommitad data om programmet kraschar.
 
 Men t.ex. update_all kanske inte behöver en commit efter varje insert, commita efter hela loopen är körd.
+
+"timeout (float) – How many seconds the connection should wait before raising an OperationalError when a table is locked. If another connection opens a transaction to modify a table, that table will be locked until the transaction is committed. Default five seconds." - Om jag inte commitar på remove tills programmet avslutas så är den tabellen låst.
 
 ### Cursor-problemet
 
@@ -127,3 +126,7 @@ Daemon är något av en halvmesyr, om man schemalägger den så öppnas en ny in
 ### Refactor dump
 
 Behöver jag dumpa databasen varje gång jag vill printa den eller göra något med den? Är det bättre att läsa in den i minne och spara den, och sen commita den till databasen när programmet är färdigt?
+
+### Prune db
+
+Lägg till ett sätt att plocka bort produkter med döda länkar ur databasen.
