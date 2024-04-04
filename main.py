@@ -18,7 +18,9 @@ DB = Database(DB_PATH)
 
 
 def menu_print(menu_items={"p": "Print DB.", "b": "Go back."}):
-    """prints the menu"""
+    """
+    Prints the menu.
+    """
 
     print("|--------------|")
     print("| Price-thingy | - Netonnet edition")
@@ -31,7 +33,9 @@ def menu_print(menu_items={"p": "Print DB.", "b": "Go back."}):
 
 
 def menu_search():
-    """search database for a search_term"""
+    """
+    Prompts for a search term and search DB for it.
+    """
 
     while True:
         clear_console()
@@ -53,7 +57,9 @@ def menu_search():
 
 
 def menu_add():
-    """user-facing menu for adding items to database."""
+    """
+    Prompts for URL and add it's product to DB.
+    """
 
     while True:
         clear_console()
@@ -77,16 +83,18 @@ def menu_add():
                         message = f"Added '{product.name}' to database."
 
                 except AttributeError:
-                    message = "Data not found."
+                    message = "Data not found in URL."
                 # Do I really need to import requests just to catch a raised error?
                 except requests.exceptions.RequestException:
-                    message = "Site unreachable."
+                    message = f"Unreachable: {url}"
 
                 input(message)
 
 
 def menu_remove():
-    """user-facing menu for removing items from database."""
+    """
+    Prompts for ID and removes it from DB.
+    """
 
     while True:
         clear_console()
@@ -94,16 +102,7 @@ def menu_remove():
 
         user_choice = input("ID: ")
 
-        # How do I check against both str and int input?
-        # 1. input
-        # 2. Check if that input CAN become an int with try? - "Bad, only use try for exceptional errors" - Kent
-        # 3. If it is an int, do the remove thing?
-        # 4. Else: do the match case thing?
-
-        # Hey, thats illegal.
-        try:
-            int(user_choice)
-
+        if user_choice.isdigit():
             product = DB.get_product_data(user_choice)
 
             if not product:
@@ -111,17 +110,17 @@ def menu_remove():
                 continue
 
             print(f"Confirm removal of '{product.name}'")
-            print("(y/n)")
+            print("y / (n)")
 
-            user_confirm = input(": ")
-            match user_confirm.lower():
+            user_choice = input(": ")
+            match user_choice.lower():
                 case "y":
                     if DB.remove_product_data(product):
                         input(f"'{product.name}' removed.")
                 case _:
                     pass
 
-        except ValueError:
+        else:
             match user_choice:
                 case "p":
                     input(format_message(DB.dump()))
@@ -132,7 +131,9 @@ def menu_remove():
 
 
 def menu_update():
-    """user-facing menu for updating database items."""
+    """
+    Prompts for ID and updates it in DB.
+    """
 
     while True:
         clear_console()
@@ -141,9 +142,7 @@ def menu_update():
         user_choice = input("ID: ")
 
         # Hey, thats illegal.
-        try:
-            int(user_choice)
-
+        if user_choice.isdigit():
             product = DB.get_product_data(user_choice)
 
             if not product:
@@ -169,7 +168,7 @@ def menu_update():
                     continue
             input(f"'{product.name}' already up to date.")
 
-        except ValueError:
+        else:
             match user_choice:
                 case "p":
                     input(format_message(DB.dump()))
@@ -180,7 +179,9 @@ def menu_update():
 
 
 def update_all() -> int:
-    """updates all items in the database"""
+    """
+    Updates all items in the database.
+    """
 
     mail_products = list()
     number_updated = 0
@@ -265,17 +266,17 @@ if __name__ == "__main__":
         print("Running update_all every 5 minutes.")
         # Not adding as a background task, it would be tedious to try to kill it if its not user facing.
         # Run as a task or cronjob to update continuously instead.
-        while True:
-            time.sleep(300)
 
-            # Open db connection. - This is legal?
-            DB.__init__(DB.file)
+        try:
+            while True:
+                time.sleep(300)
 
-            print(
-                f"{time.strftime('%H:%M', time.localtime())} | {update_all()} product(s) updated."
-            )
+                print(
+                    f"{time.strftime('%H:%M', time.localtime())} | {update_all()} product(s) updated."
+                )
 
-            # Close db so someone can edit it while not updating.
+        except KeyboardInterrupt:
+            print("Exiting...")
             DB.close()
 
     else:
