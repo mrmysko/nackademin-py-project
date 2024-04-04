@@ -1,16 +1,13 @@
 import argparse
-import os
 import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import requests
 from Database import Database
-from GetUrlData import get_url_data
-from FormatMessage import format_message
-from MailAlert import mail_alert
+from helper import check_update, clear_console, format_message, get_url_data
+from mail_alert import mail_alert
 from Product import Product
-
 
 # Dont make a static db. Allow to change?
 # Opens price.db placed in programs root folder.
@@ -18,14 +15,6 @@ from Product import Product
 DB_PATH = Path(__file__).with_name("edited copy.db")  # Test-db
 
 DB = Database(DB_PATH)
-
-
-def clear_console():
-    """clears the console on both windows and unix systems."""
-    command = "clear"
-    if os.name == "nt":
-        command = "cls"
-    os.system(command)
 
 
 def menu_print(menu_items={"p": "Print DB.", "b": "Go back."}):
@@ -174,6 +163,7 @@ def menu_update():
                 if DB.insert_product_data(product):
                     input(f"'{product.name}' updated.")
                     continue
+                # It's impossible to get here afaik.
                 else:
                     input("Could not update database.")
                     continue
@@ -224,44 +214,9 @@ def update_all() -> int:
 
     # Send mail if list is not empty.
     if mail_products:
-        mail_alert(mail_products)
+        print(mail_alert(mail_products))
 
     return number_updated
-
-
-def check_update(product: Product) -> tuple:
-    """check if a product has updated data, returns three states and the product depending on has updated.\n
-    0 - Do nothing, nothing has updated.\n
-    1 - Insert updated product in db.\n
-    2 - Insert AND mail about lower price."""
-
-    try:
-        # Creates a new product-object from the supplied products url.
-        updated_product = Product(*get_url_data(product.url))
-    except requests.exceptions.RequestException:
-        raise
-    except AttributeError:
-        raise
-
-    # If the price of the updated product is the same as the database value. Return False. Mothing has updated.
-    if updated_product.price == product.price:
-        return (0, product)
-
-    # If the updated price is lower than current, return 2 to mail.
-    if updated_product.price < product.price:
-        product.price = updated_product.price
-        product.last_updated = updated_product.last_updated
-
-        # If the new price is lower, also set the products lowest_price.
-        if product.price < product.lowest_price:
-            product.lowest_price = product.price
-            product.lowest_price_date = product.last_updated
-
-        return (2, product)
-
-    product.price = updated_product.price
-    product.last_updated = updated_product.last_updated
-    return (1, product)
 
 
 def main():
