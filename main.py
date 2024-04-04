@@ -1,20 +1,21 @@
-import os
 import argparse
+import os
 import time
-import requests
-
-from pathlib import Path
-from Product import Product
-from Database import Database
 from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
+
+import requests
+from Database import Database
+from GetUrlData import get_url_data
 from FormatMessage import format_message
 from MailAlert import mail_alert
+from Product import Product
 
 
 # Dont make a static db. Allow to change?
 # Opens price.db placed in programs root folder.
 # DB_PATH = Path(__file__).with_name("price.db")
-DB_PATH = Path(__file__).with_name("edited.db")  # Test-db
+DB_PATH = Path(__file__).with_name("edited copy.db")  # Test-db
 
 DB = Database(DB_PATH)
 
@@ -38,6 +39,61 @@ def menu_print(menu_items={"p": "Print DB.", "b": "Go back."}):
         print(f"{key}. {item.ljust(12)}", end="")
         if index % 2 == 0:
             print()
+
+
+def menu_search():
+    """search database for a search_term"""
+
+    while True:
+        clear_console()
+        menu_print()
+
+        search_term = input("Search: ")
+
+        match search_term:
+            case "p":
+                input(format_message(DB.dump()))
+            case "b":
+                break
+            case _:
+                result = DB.search(search_term)
+                if result:
+                    input(format_message(result))
+                    continue
+                input("No matches.")
+
+
+def menu_add():
+    """user-facing menu for adding items to database."""
+
+    while True:
+        clear_console()
+        menu_print()
+
+        url = input("URL: ")
+
+        match url:
+            case "p":
+                input(format_message(DB.dump()))
+            case "b":
+                break
+            case _:
+                try:
+                    product = Product(*get_url_data(url))
+
+                    # Check if product is in database, else add it.
+                    if not DB.insert_product_data(product):
+                        message = f"Could not add {product.name} to database."
+                    else:
+                        message = f"Added {product.name} to database."
+
+                except AttributeError:
+                    message = "Data not found."
+                # Do I really need to import requests just to catch a raised error?
+                except requests.exceptions.RequestException:
+                    message = "Site unreachable."
+
+                input(message)
 
 
 def menu_remove():
@@ -111,8 +167,7 @@ def menu_update():
                 input("Site unreachable.")
                 continue
 
-            # Status 2 in a manual update doesnt require a mail.
-            if status == 1 or status == 2:
+            if status:
                 if DB.insert_product_data(product):
                     input(f"{product.name} updated.")
                     continue
@@ -129,61 +184,6 @@ def menu_update():
                     break
                 case _:
                     pass
-
-
-def menu_add():
-    """user-facing menu for adding items to database."""
-
-    while True:
-        clear_console()
-        menu_print()
-
-        url = input("URL: ")
-
-        match url:
-            case "p":
-                input(format_message(DB.dump()))
-            case "b":
-                break
-            case _:
-                try:
-                    product = Product(("url", url))
-
-                    # Check if product is in database, else add it.
-                    if not DB.insert_product_data(product):
-                        message = f"Could not add {product.name} to database."
-                    else:
-                        message = f"Added {product.name} to database."
-
-                except AttributeError:
-                    message = "Data not found."
-                # Do I really need to import requests just to catch a raised error?
-                except requests.exceptions.RequestException:
-                    message = "Site unreachable."
-
-                input(message)
-
-
-def menu_search():
-    """search database for a search_term"""
-
-    while True:
-        clear_console()
-        menu_print()
-
-        search_term = input("Search: ")
-
-        match search_term:
-            case "p":
-                input(format_message(DB.dump()))
-            case "b":
-                break
-            case _:
-                result = DB.search(search_term)
-                if result:
-                    input(format_message(result))
-                    continue
-                input("No matches.")
 
 
 def update_all() -> int:
@@ -226,7 +226,7 @@ def check_update(product: Product) -> tuple:
 
     try:
         # Creates a new product-object from the supplied products url.
-        updated_product = Product(("url", product.url))
+        updated_product = Product(*get_url_data(product.url))
     except requests.exceptions.RequestException:
         raise
 
@@ -264,7 +264,6 @@ def main():
 
     while True:
         clear_console()
-
         menu_print(menu_items)
 
         user_choice = input(": ")

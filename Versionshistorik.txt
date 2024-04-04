@@ -16,6 +16,6 @@ Version 0.53-03.31  : "Deamon-mode"
 
 Version 0.54-04.01  : Mail-alerting.
 
-Version 0.541: Error-handling.
+Version 0.541-04.03 : Error-handling.
 
-Version 0.6: Feature freeze, testing, bug-hunting.
+Version 0.6-04.03   : Feature freeze, testing, bug-hunting.

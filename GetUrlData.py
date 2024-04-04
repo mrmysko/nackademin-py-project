@@ -1,11 +1,11 @@
 import re
-import requests
-
 from datetime import datetime
+
+import requests
 from bs4 import BeautifulSoup
 
 
-def ExtractData(url: str) -> tuple:
+def get_url_data(url: str) -> tuple:
     """extracts name and price data of a given netonnet URL"""
 
     # Netonnet didnt like requests without a useragent.
@@ -40,4 +40,9 @@ def ExtractData(url: str) -> tuple:
 
     last_updated = datetime.now().isoformat()
 
-    return (name, price, last_updated)
+    return (
+        ("name", name),
+        ("price", price),
+        ("url", url),
+        ("last_updated", last_updated),
+    )
