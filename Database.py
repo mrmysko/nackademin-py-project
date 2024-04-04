@@ -113,7 +113,7 @@ class Database:
         # Creates product objects for every zipped value, the star in the argument unpacks zip and passes tuples as arguments.
         products = [Product(*row) for row in tupled_values]
 
-        # This is a list of class-objects.
+        # This is a list of product objects.
         return products
 
     def close(self):

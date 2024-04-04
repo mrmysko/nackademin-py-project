@@ -1,6 +1,6 @@
 import smtplib
-
 from email.message import EmailMessage
+
 from FormatMessage import format_message
 
 # Need both smtplib to establish the connection to the mail server
