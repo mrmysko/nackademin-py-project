@@ -1,9 +1,6 @@
-###############################################
-# REPO MOVED TO mrmysko/nackademin-py-project #
-###############################################
-
 import smtplib
 from email.message import EmailMessage
+from pathlib import Path
 
 from helper import format_message
 
@@ -13,8 +10,8 @@ def mail_alert(products: list) -> str:
     Mail a formatted string of product updates.
     """
 
-    sender = ""  # This is an alias to my stmp.login mail.
-    recipient = ""
+    sender = "robin.kavenius@live.se"  # This is an alias to my stmp.login mail.
+    recipient = "robin.kavenius@live.se"
 
     message = format_message(products, alt_format=True)
 
@@ -27,11 +24,15 @@ def mail_alert(products: list) -> str:
 
     message = f"Mailing to '{recipient}'."
 
+    credentials_file = Path(__file__).with_name(".credentials")
+    with open(credentials_file, "r", encoding="utf8") as file:
+        mail, password = file.readlines()
+
     try:
         # Establish mail-server connection.
         smtp = smtplib.SMTP("smtp-mail.outlook.com", port=587)
         smtp.starttls()
-        smtp.login("mail", "pass")
+        smtp.login(mail, password)
         smtp.sendmail(sender, recipient, email.as_string())
     except smtplib.SMTPAuthenticationError:
         message = "Mail error: Invalid credentials."
