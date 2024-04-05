@@ -39,6 +39,8 @@ Sorteringsinställningar, bara visa x-antal rader i taget som less/more etc.
 
 Jag har en alternativ printout för konsoler med lägre bredd, borde gå att göra mer dynamiskt.
 
+Visa mer tydligt om priset har blivit lägre,  nuvarande formatering visar inte det. Ny printout?
+
 ### Uppdatera med threading
 
 Använd threading för att uppdatera databasen kontinuerligt, även om programmet väntar på användarinput eller håller på med något annat.

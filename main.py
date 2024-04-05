@@ -177,6 +177,7 @@ def update_all() -> int:
     """
 
     mail_products = list()
+    updated_products = list()
     number_updated = 0
 
     products = DB.dump()
@@ -195,16 +196,19 @@ def update_all() -> int:
 
     # Creates a threadpool with 8 threads.
     with ThreadPoolExecutor(max_workers=12) as executor:
-        # Executes the test_update function on every product parallel, saves result to a map in updated_products
-        updated_products = executor.map(handle_check_update_error, products, timeout=20)
+        # Executes the test_update function on every product parallel, saves result to a map in checked_products
+        checked_products = executor.map(handle_check_update_error, products, timeout=20)
 
-    # Commits updated_products to database
-    for state, product in updated_products:
+    # Commits checked_products to database
+    for state, product in checked_products:
         # Right now this will always increment because last_updated will always change.
         if state >= 1:
+            updated_products.append(product)
             number_updated += DB.insert_product_data(product)
             if state == 2:
                 mail_products.append(product)
+
+    print(format_message(updated_products))
 
     # Send mail if list is not empty.
     if mail_products:
