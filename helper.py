@@ -1,3 +1,7 @@
+###############################################
+# REPO MOVED TO mrmysko/nackademin-py-project #
+###############################################
+
 """
 A module with helper functions for price-thingy (name pending)
 """

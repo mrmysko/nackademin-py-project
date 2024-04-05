@@ -1,3 +1,7 @@
+###############################################
+# REPO MOVED TO mrmysko/nackademin-py-project #
+###############################################
+
 import argparse
 import time
 from concurrent.futures import ThreadPoolExecutor
