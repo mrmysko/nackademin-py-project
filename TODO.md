@@ -91,6 +91,11 @@ Få ut art nr från url elr html, leta efter pris med bs4 typ find("h2", {"name"
 Prova dryscrape elr qt4
 <https://pythonprogramming.net/javascript-dynamic-scraping-parsing-beautiful-soup-tutorial/>
 
+Netonnet har ett API
+<https://api.netonnet.se/reservation/api/v1/isreservable?MarketId=1&SiteType=1&ArticleNumber=1026559&ArticlePriceIncVat=499&CustomerId=-1>
+
+Nvm, kommer inte åt det om inte origin är deras front-end. Also beta.netonnet.se finns och verkar va en ny site som bygger på react.
+
 ### Butikslogin
 
 Hantera butiksinloggning för medlemspriser.
@@ -110,10 +115,6 @@ För att kunna hantera fel måste jag kolla värdet i cursorn, men kollar jag v�
 Lösningen är att jag läser in allt i minne med .fetchone/all/many. och skickar det till define_product istället för ett cursor-object, men då måste jag skriva om define_product IGEN, och gå tillbaka till att läsa in allt i minnet.
 
 Jag vet inte vad som är mest tidseffektivt, men jag skulle i get_product_data kunna köra queryn, kolla om den kom tillbaka tom och om den inte gjorde det så kör jag samma query igen för att få en ny pointer.
-
-### Ändra DB
-
-Tillåt ett argument för att skicka in en annan db.
 
 ### SQLite timedate
 

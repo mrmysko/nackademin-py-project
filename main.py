@@ -9,13 +9,6 @@ from helper import check_update, clear_console, format_message, get_url_data
 from mail_alert import mail_alert
 from Product import Product
 
-# Dont make a static db. Allow to change?
-# Opens price.db placed in programs root folder.
-# DB_PATH = Path(__file__).with_name("price.db")
-DB_PATH = Path(__file__).with_name("edited copy.db")  # Test-db
-
-DB = Database(DB_PATH)
-
 
 def menu_print(menu_items={"p": "Print DB.", "b": "Go back."}):
     """
@@ -260,7 +253,16 @@ def main():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="A price-thingy.")
     parser.add_argument("-d", "--daemon", help="update database", action="store_true")
+    parser.add_argument("-f", "--file", help="specify file")
     args = parser.parse_args()
+
+    # Opens price.db placed in programs root folder.
+    if args.file:
+        DB_PATH = Path(__file__).with_name(args.file)
+    else:
+        DB_PATH = Path(__file__).with_name("price.sql")
+
+    DB = Database(DB_PATH)
 
     if args.daemon:
         print("Running update_all every 5 minutes.")
