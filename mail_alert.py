@@ -32,7 +32,7 @@ def mail_alert(products: list) -> str:
         # Establish mail-server connection.
         smtp = smtplib.SMTP("smtp-mail.outlook.com", port=587)
         smtp.starttls()
-        smtp.login(mail, password)
+        smtp.login(mail.strip(), password.strip())
         smtp.sendmail(sender, recipient, email.as_string())
     except smtplib.SMTPAuthenticationError:
         message = "Mail error: Invalid credentials."

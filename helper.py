@@ -110,8 +110,7 @@ def format_message(products: list, alt_format=False) -> str:
     """
 
     if not products:
-        print("Database empty.")
-        return
+        return "Database empty."
 
     message = list()
     longest_name = 0
